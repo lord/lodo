@@ -158,10 +158,7 @@ void write_gamma_color(tcl_color *p, uint8_t red, uint8_t green, uint8_t blue) {
 }
 
 void write_gamma_color_to_buffer(tcl_buffer *buf, int position, uint8_t red, uint8_t green, uint8_t blue) {
-  uint8_t gamma_corrected_red = gamma_table_red[red];
-  uint8_t gamma_corrected_green = gamma_table_green[green];
-  uint8_t gamma_corrected_blue = gamma_table_blue[blue];
-  write_color(&buf->pixels[position],gamma_corrected_red, gamma_corrected_green, gamma_corrected_blue);
+  write_gamma_color(&buf->pixels[position],red,green,blue);
 }
 
 int open_device() {
