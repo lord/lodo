@@ -5,49 +5,61 @@ package main
 import "C"
 import "fmt"
 import "time"
+import "errors"
 
-func setColor(buffer *_Ctype_tcl_buffer, led_number int, r int, g int, b int) {
-	C.write_gamma_color_to_buffer(buffer, C.int(led_number), C.uint8_t(r), C.uint8_t(g), C.uint8_t(b))
+// import "time"
+
+type Strand struct {
+	device   C.int
+	buffer   *_Ctype_tcl_buffer
+	ledCount int
 }
 
-func sendBuffer(device C.int, buffer *_Ctype_tcl_buffer) {
-	C.send_buffer(device, buffer)
-}
+func (s *Strand) Connect(ledCount int) error {
+	s.ledCount = ledCount
+	s.device = C.open_device()
 
-func main() {
-	device := C.open_device()
-	fmt.Print("Device status: ")
-	fmt.Println(device)
-
-	if device <= 0 {
-		fmt.Println("Device init failed.")
-		return
+	if s.device <= 0 {
+		return errors.New("Device init failed")
 	}
 
 	C.set_gamma(2.2, 2.2, 2.2)
-
-	spi_status := C.spi_init(device)
-	fmt.Print("SPI status: ")
-	fmt.Println(spi_status)
-
-	if spi_status != 0 {
-		fmt.Println("SPI init failed.")
-		return
+	spiStatus := C.spi_init(s.device)
+	if spiStatus != 0 {
+		return errors.New("SPI init failed")
 	}
 
-	buffer := &C.tcl_buffer{}
-	tcl_status := C.tcl_init(buffer, 30)
-	fmt.Print("TCL status: ")
-	fmt.Println(tcl_status)
+	s.buffer = &C.tcl_buffer{}
+	tclStatus := C.tcl_init(s.buffer, C.int(s.ledCount))
+	if tclStatus != 0 {
+		return errors.New("TCL init failed")
+	}
 
-	if tcl_status != 0 {
-		fmt.Println("TCL init failed.")
-		return
+	return nil
+}
+
+func (s *Strand) SetColor(ledNumber int, r int, g int, b int) {
+	C.write_gamma_color_to_buffer(s.buffer, C.int(ledNumber), C.uint8_t(r), C.uint8_t(g), C.uint8_t(b))
+}
+
+func (s *Strand) Save() {
+	C.send_buffer(s.device, s.buffer)
+}
+
+func main() {
+	strand := Strand{}
+	ledCount := 30
+	err := strand.Connect(ledCount)
+
+	if err != nil {
+		fmt.Println("Error:")
+		fmt.Println(err)
 	}
 
 	color := 0
 	goingDown := false
 	for true {
+	for j := 0; j < 1000; j++ {
 		if goingDown {
 			color--
 		} else {
@@ -61,10 +73,10 @@ func main() {
 			color = 255
 		}
 
-		for i := 0; i < 30; i++ {
-			setColor(buffer, i, color, color, color)
+		for i := 0; i < ledCount; i++ {
+			strand.SetColor(i, color, color, color)
 		}
-		sendBuffer(device, buffer)
+		strand.Save()
 		time.Sleep(10 * time.Millisecond)
 	}
 }
