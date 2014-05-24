@@ -56,6 +56,7 @@ typedef struct _tcl_buffer {
  */
 int tcl_init(tcl_buffer *buf, int leds);
 
+
 /* The spi_init function initializes the SPI device for use by the TCL
  * LED strands. It takes one argument:
  *
@@ -120,6 +121,7 @@ void set_gamma(double gamma_red, double gamma_green, double gamma_blue);
  * uint8_t blue - The blue value between 0 (off) and 255 (full on).
  */
 void write_gamma_color(tcl_color *p, uint8_t red, uint8_t green, uint8_t blue);
+void write_gamma_color_to_buffer(tcl_buffer *buf, int position, uint8_t red, uint8_t green, uint8_t blue);
 
 int open_device();
 void close_device(int fd);
