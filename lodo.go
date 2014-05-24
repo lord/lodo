@@ -52,13 +52,13 @@ func main() {
 	err := strand.Connect(ledCount)
 
 	if err != nil {
-		fmt.Println("Error:")
+		fmt.Print("Error: ")
 		fmt.Println(err)
+		return
 	}
 
 	color := 0
 	goingDown := false
-	for true {
 	for j := 0; j < 1000; j++ {
 		if goingDown {
 			color--
