@@ -4,10 +4,15 @@ package main
 // #include "tclled.h"
 import "C"
 import "fmt"
-import "time"
+
+// import "time"
 import "errors"
 
 // import "time"
+
+//////////////////
+// STRAND CODE
+//////////////////
 
 type Strand struct {
 	device   C.int
@@ -43,40 +48,136 @@ func (s *Strand) SetColor(ledNumber int, r int, g int, b int) {
 }
 
 func (s *Strand) Save() {
+	fmt.Println("Strand (", s, ") saving...")
 	C.send_buffer(s.device, s.buffer)
 }
 
+//////////////////
+// BOARD CODE
+//////////////////
+
+type Board struct {
+	strand  *Strand
+	pixelW  int
+	pixelH  int
+	squareW int
+	squareH int
+}
+
+func (brd *Board) Connect(pixelW int, pixelH int, squareW int, squareH int) error {
+	brd.pixelW = pixelW
+	brd.pixelH = pixelH
+	brd.squareW = squareW
+	brd.squareH = squareH
+	brd.strand = &Strand{}
+	return brd.strand.Connect(pixelW * pixelH)
+}
+
+func (brd *Board) Save() {
+	brd.strand.Save()
+}
+
+func getPixelNum(x int, y int) int {
+	xSq := x / 5
+	ySq := y / 5
+	var boardNum, pixelNum int
+
+	// NOTE: this is hardcoded for a 4 x 5 board with 25px/square
+	if ySq%2 == 0 {
+		boardNum = ySq*4 + xSq
+	} else {
+		boardNum = ySq*4 + 3 - xSq
+	}
+
+	xPixelInSq := x % 5
+	yPixelInSq := y % 5
+
+	if yPixelInSq%2 == 0 {
+		pixelNum = yPixelInSq*5 + xPixelInSq
+	} else {
+		pixelNum = yPixelInSq*5 + 4 - xPixelInSq
+	}
+
+	return boardNum*25 + pixelNum
+}
+
+func (brd *Board) DrawPixel(x int, y int, r int, g int, b int) {
+	pixelNum := getPixelNum(x, y)
+	fmt.Println("Pixel Drawn at: (", x, y, ") ->", pixelNum)
+	brd.strand.SetColor(pixelNum, r, g, b)
+}
+
+func (brd *Board) SetPixel(x int, r int, g int, b int) {
+	fmt.Println("(", r, g, b, ") Pixel Drawn ->", x)
+	fmt.Println("Double Checking: () ->", x)
+	brd.strand.SetColor(x, r, g, b)
+}
+
 func main() {
-	strand := Strand{}
-	ledCount := 30
-	err := strand.Connect(ledCount)
+	// board := Board{}
+	// w := 100
+	// h := 125
+	// err := board.Connect(w, h, 4, 5)
+
+	// if err != nil {
+	// 	fmt.Print("Error: ")
+	// 	fmt.Println(err)
+	// 	return
+	// }
+	// for {
+	// 	x := 0
+	// 	r := 0
+	// 	g := 0
+	// 	b := 0
+
+	// 	fmt.Scan(&x, &r, &g, &b)
+	// 	board.SetPixel(x, r, g, b)
+	// 	board.Save()
+	// }
+
+	board := Strand{}
+	c := 500
+	err := board.Connect(c)
 
 	if err != nil {
 		fmt.Print("Error: ")
 		fmt.Println(err)
 		return
 	}
+	for {
+		x := 0
+		r := 0
+		g := 0
+		b := 0
 
-	color := 0
-	goingDown := false
-	for j := 0; j < 1000; j++ {
-		if goingDown {
-			color--
-		} else {
-			color++
-		}
-		if color < 0 {
-			goingDown = false
-			color = 0
-		} else if color > 255 {
-			goingDown = true
-			color = 255
-		}
-
-		for i := 0; i < ledCount; i++ {
-			strand.SetColor(i, color, color, color)
-		}
-		strand.Save()
-		time.Sleep(10 * time.Millisecond)
+		fmt.Scan(&x, &r, &g, &b)
+		board.SetColor(x, r, g, b)
+		board.Save()
 	}
+
+	// xPix := 0
+	// yPix := 0
+	// for {
+	// 	xPix++
+	// 	if xPix > w {
+	// 		xPix = 0
+	// 		yPix++
+	// 	}
+	// 	if yPix > h {
+	// 		xPix = 0
+	// 		yPix = 0
+	// 	}
+
+	// 	for x := 0; x < w; x++ {
+	// 		for y := 0; y < h; y++ {
+	// 			if x == xPix && y == yPix {
+	// 				board.DrawPixel(x, y, 100, 100, 100)
+	// 			} else {
+	// 				board.DrawPixel(x, y, 0, 0, 0)
+	// 			}
+	// 		}
+	// 	}
+	// 	board.Save()
+	// 	time.Sleep(20 * time.Millisecond)
+	// }
 }
