@@ -116,18 +116,14 @@ func getPixelNum(x int, y int) int {
 
 func (brd *Board) DrawPixel(x int, y int, r int, g int, b int) {
 	pixelNum := getPixelNum(x, y)
-	// fmt.Println("Pixel Drawn at: (", x, y, ") ->", pixelNum)
 	brd.strand.SetColor(pixelNum, r, g, b)
 }
 
 func (brd *Board) SetColor(x int, r int, g int, b int) {
-	// fmt.Println("(", r, g, b, ") Pixel Drawn ->", x)
-	// fmt.Println("Double Checking: () ->", x)
 	brd.strand.SetColor(x, r, g, b)
 }
 
 func main() {
-	fmt.Println("foo3")
 	board := Board{}
 
 	w := 20
@@ -135,42 +131,11 @@ func main() {
 	err := board.Connect(w, h, 4, 5)
 	defer board.Free()
 
-	// if err != nil {
-	// 	fmt.Print("Error: ")
-	// 	fmt.Println(err)
-	// 	return
-	// }
-	// for {
-	// 	x := 0
-	// 	r := 0
-	// 	g := 0
-	// 	b := 0
-
-	// 	fmt.Scan(&x, &r, &g, &b)
-	// 	board.SetColor(x, r, g, b)
-	// 	board.Save()
-	// }
-
-	// board := Strand{}
-	// c := 500
-	// err := board.Connect(c)
-
 	if err != nil {
 		fmt.Print("Error: ")
 		fmt.Println(err)
 		return
 	}
-	// for {
-	// 	r := 0
-	// 	g := 0
-	// 	b := 0
-	// 	x := 0
-	// 	fmt.Scan(&x, &r, &g, &b)
-	// 	board.SetColor(x, r, g, b)
-	// 	board.Save()
-	// }
-
-	fmt.Println("foo2")
 	xPix := 0
 	yPix := 0
 	for {
@@ -183,8 +148,6 @@ func main() {
 			xPix = 0
 			yPix = 0
 		}
-		fmt.Println("foo")
-		fmt.Println(xPix, yPix)
 
 		for x := 0; x < w; x++ {
 			for y := 0; y < h; y++ {
