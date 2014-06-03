@@ -1,5 +1,7 @@
 package main
 
+import "errors"
+
 type Board struct {
 	strand  *Strand
 	pixelW  int
@@ -49,9 +51,14 @@ func getPixelNum(x int, y int) int {
 	return boardNum*25 + pixelNum
 }
 
-func (brd *Board) DrawPixel(x int, y int, r int, g int, b int) {
+func (brd *Board) DrawPixel(x int, y int, r int, g int, b int) error {
+	if x < 0 || x >= brd.pixelW || y < 0 || y >= brd.pixelH {
+		return errors.New("Pixel was drawn outside the board's space")
+	}
 	pixelNum := getPixelNum(x, y)
 	brd.strand.SetColor(pixelNum, r, g, b)
+
+	return nil
 }
 
 func (brd *Board) SetColor(x int, r int, g int, b int) {
