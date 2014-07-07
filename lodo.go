@@ -2,6 +2,7 @@ package main
 
 import "fmt"
 import "time"
+import "math"
 
 func main() {
 	board := Board{}
@@ -12,30 +13,19 @@ func main() {
 	defer board.Free()
 
 	if err != nil {
-		fmt.Print("Error: ")
-		fmt.Println(err)
+		fmt.Println("Error:", err)
 		return
 	}
-	xPix := 0
-	yPix := 0
+	offset := 0.0
 	for {
-		xPix++
-		if xPix > w {
-			xPix = 0
-			yPix++
-		}
-		if yPix > h {
-			xPix = 0
-			yPix = 0
-		}
-
+		offset -= 0.2
 		for x := 0; x < w; x++ {
 			for y := 0; y < h; y++ {
-				if x == xPix && y == yPix {
-					board.DrawPixel(x, y, 100, 100, 100)
-				} else {
-					board.DrawPixel(x, y, 0, 0, 0)
-				}
+				dx := x - 10
+				dy := y - 10
+				dis := math.Sqrt(float64(dx*dx + dy*dy))
+				amt := int(math.Sin(dis+offset)*125.0 + 125.0)
+				board.DrawPixel(x, y, amt, 0, 125-amt/2)
 			}
 		}
 		board.Save()
