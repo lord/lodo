@@ -7,7 +7,7 @@ import "errors"
 
 type Strand struct {
 	device   C.int
-	buffer   *_Ctype_tcl_buffer
+	buffer   *C.struct__tcl_buffer
 	ledCount int
 }
 
@@ -25,7 +25,7 @@ func (s *Strand) Connect(ledCount int) error {
 		return errors.New("SPI init failed")
 	}
 
-	s.buffer = &C.tcl_buffer{}
+	s.buffer = &C.struct__tcl_buffer{}
 	tclStatus := C.tcl_init(s.buffer, C.int(s.ledCount))
 	if tclStatus != 0 {
 		return errors.New("TCL init failed")
