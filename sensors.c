@@ -8,8 +8,8 @@
 #include <sys/time.h>
 
 
-#include "./c_wrapper/pruio_c_wrapper.h" // include header
-#include "./c_wrapper/pruio_pins.h" // include header
+#include "./pruio_c_wrapper.h" // include header
+#include "./pruio_pins.h" // include header
 
 #define P1 P8_13
 #define P2 P8_15

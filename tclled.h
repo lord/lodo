@@ -77,6 +77,8 @@ int spi_init(int filedes);
  */
 void write_color(tcl_color *p, uint8_t red, uint8_t green, uint8_t blue);
 
+void write_gamma_color_to_buffer(tcl_buffer *buf, int position, uint8_t red, uint8_t green, uint8_t blue);
+
 /* The send_buffer function writes the contents of the tcl_buffer structure to
  * the spi device. It takes two arguments:
  *
