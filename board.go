@@ -77,6 +77,30 @@ func (brd *Board) DrawAll(c Color) error {
 	return nil
 }
 
+func (brd *Board) DrawLine(x1, y1, x2, y2 int, c Color) error {
+	return errors.New("Not implemented")
+}
+
+func (brd *Board) DrawRect(x1, y1, x2, y2 int, c Color) error {
+	return errors.New("Not implemented")
+}
+
+func (brd *Board) DrawRectOutline(x1, y1, x2, y2 int, c Color) error {
+	return errors.New("Not implemented")
+}
+
+func (brd *Board) DrawCircle(x1, y1, r int, c Color) error {
+	return errors.New("Not implemented")
+}
+
+func (brd *Board) DrawCircleOutline(x1, y1, r int, c Color) error {
+	return errors.New("Not implemented")
+}
+
+// func (brd *Board) DrawSprite(x1, y1, r int, c Color) error {
+// 	return errors.New("Not implemented")
+// }
+
 /////////////////////////////////
 // INTERNAL FUNCTIONS
 /////////////////////////////////
