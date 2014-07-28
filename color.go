@@ -33,6 +33,11 @@ func (c Color) AddAlphaColor(c2 Color) Color {
 	return c
 }
 
+func (c Color) WithAlpha(a float64) Color {
+	c.A = a
+	return c
+}
+
 func (c Color) Scale(amt float32) Color {
 	return MakeColor(
 		int(amt*float32(c.R)),
