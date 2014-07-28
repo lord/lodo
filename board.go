@@ -105,7 +105,7 @@ func (brd *Board) DrawRectOutline(x1, y1, x2, y2 int, c Color) error {
 		}
 	}
 
-	for y := y1; y <= y2; y++ {
+	for y := y1 + 1; y <= y2-1; y++ {
 		err := brd.DrawPixel(x1, y, c)
 		if err != nil {
 			return err
