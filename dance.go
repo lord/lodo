@@ -18,13 +18,13 @@ type dwave struct {
 var dw [30]dwave
 
 func process_dance(brd Board, t time.Duration) error {
-	brd.DrawAll(0, 0, 0)
+	brd.DrawAll(MakeColor(0, 0, 0))
 	for row := 0; row < 5; row++ {
 		for col := 0; col < 4; col++ {
 			state := brd.getBoardState(row, col)
 			if state == pressed {
 				color := randomColor()
-				_ = brd.DrawSquare(col, row, color.R, color.G, color.B)
+				_ = brd.DrawSquare(col, row, color)
 				addWave(col, row, color)
 			}
 		}
@@ -50,9 +50,9 @@ func process_dance(brd Board, t time.Duration) error {
 								amt = (1 + amt) * decay
 							}
 
-							brd.DrawPixel(x, y, int(amt*float32(dw[i].color.R)),
+							brd.DrawPixel(x, y, MakeColor(int(amt*float32(dw[i].color.R)),
 								int(amt*float32(dw[i].color.G)),
-								int(amt*float32(dw[i].color.B)))
+								int(amt*float32(dw[i].color.B))))
 						}
 					}
 				}

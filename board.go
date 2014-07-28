@@ -51,28 +51,28 @@ func (brd *Board) Save() {
 // DRAWING FUNCTIONS
 /////////////////////////////////
 
-func (brd *Board) DrawPixel(x int, y int, r int, g int, b int) error {
+func (brd *Board) DrawPixel(x int, y int, c Color) error {
 	if x < 0 || x >= brd.pixelW || y < 0 || y >= brd.pixelH {
 		return errors.New("Pixel was drawn outside the board's space")
 	}
 	pixelNum := getPixelNum(x, y)
-	brd.strand.SetColor(pixelNum, r, g, b)
+	brd.strand.SetColor(pixelNum, c)
 
 	return nil
 }
 
-func (brd *Board) DrawSquare(col int, row int, r int, g int, b int) error {
+func (brd *Board) DrawSquare(col int, row int, c Color) error {
 	for i := 0; i < 5; i++ {
 		for j := 0; j < 5; j++ {
-			_ = brd.DrawPixel(col*5+i, row*5+j, r, g, b)
+			_ = brd.DrawPixel(col*5+i, row*5+j, c)
 		}
 	}
 	return nil
 }
 
-func (brd *Board) DrawAll(r int, g int, b int) error {
+func (brd *Board) DrawAll(c Color) error {
 	for i := 0; i < brd.pixelW*brd.pixelH; i++ {
-		brd.strand.SetColor(i, r, g, b)
+		brd.strand.SetColor(i, c)
 	}
 	return nil
 }

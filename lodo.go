@@ -23,7 +23,7 @@ func main() {
 	}
 
 	poll := make(chan string)
-	go board.pollSensors(poll)
+	// go board.pollSensors(poll)
 	for {
 		select {
 		case msg := <-poll:

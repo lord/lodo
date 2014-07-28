@@ -32,7 +32,7 @@ func (s *Strand) Connect(ledCount int) error {
 	}
 
 	for i := 0; i < ledCount; i++ {
-		s.SetColor(i, 0, 0, 0)
+		s.SetColor(i, MakeColor(0, 0, 0))
 	}
 	s.Save()
 
@@ -46,8 +46,8 @@ func (s *Strand) Free() error {
 	return nil
 }
 
-func (s *Strand) SetColor(ledNumber int, r int, g int, b int) {
-	C.write_gamma_color_to_buffer(s.buffer, C.int(ledNumber), C.uint8_t(r), C.uint8_t(g), C.uint8_t(b))
+func (s *Strand) SetColor(ledNumber int, c Color) {
+	C.write_gamma_color_to_buffer(s.buffer, C.int(ledNumber), C.uint8_t(c.R), C.uint8_t(c.G), C.uint8_t(c.B))
 }
 
 func (s *Strand) Save() {
