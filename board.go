@@ -23,6 +23,10 @@ type Board struct {
 	squareH int
 }
 
+/////////////////////////////////
+// CONNECTION FUNCTIONS
+/////////////////////////////////
+
 func (brd *Board) Connect(pixelW int, pixelH int, squareW int, squareH int) error {
 	brd.pixelW = pixelW
 	brd.pixelH = pixelH
@@ -43,30 +47,9 @@ func (brd *Board) Save() {
 	brd.strand.Save()
 }
 
-//
-func getPixelNum(x int, y int) int {
-	col := x / 5
-	row := y / 5
-	xPixelInSq := x % 5
-	yPixelInSq := y % 5
-
-	var boardNum, pixelNum int
-
-	// NOTE: this is hardcoded for a 4 x 5 board with 25px/square
-	if row%2 == 1 {
-		boardNum = row*4 + col
-	} else {
-		boardNum = row*4 + 3 - col
-	}
-
-	if yPixelInSq%2 == 1 {
-		pixelNum = yPixelInSq*5 + xPixelInSq
-	} else {
-		pixelNum = yPixelInSq*5 + 4 - xPixelInSq
-	}
-
-	return boardNum*25 + pixelNum
-}
+/////////////////////////////////
+// DRAWING FUNCTIONS
+/////////////////////////////////
 
 func (brd *Board) DrawPixel(x int, y int, r int, g int, b int) error {
 	if x < 0 || x >= brd.pixelW || y < 0 || y >= brd.pixelH {
@@ -92,6 +75,34 @@ func (brd *Board) DrawAll(r int, g int, b int) error {
 		brd.strand.SetColor(i, r, g, b)
 	}
 	return nil
+}
+
+/////////////////////////////////
+// INTERNAL FUNCTIONS
+/////////////////////////////////
+
+func getPixelNum(x int, y int) int {
+	col := x / 5
+	row := y / 5
+	xPixelInSq := x % 5
+	yPixelInSq := y % 5
+
+	var boardNum, pixelNum int
+
+	// NOTE: this is hardcoded for a 4 x 5 board with 25px/square
+	if row%2 == 1 {
+		boardNum = row*4 + col
+	} else {
+		boardNum = row*4 + 3 - col
+	}
+
+	if yPixelInSq%2 == 1 {
+		pixelNum = yPixelInSq*5 + xPixelInSq
+	} else {
+		pixelNum = yPixelInSq*5 + 4 - xPixelInSq
+	}
+
+	return boardNum*25 + pixelNum
 }
 
 func (brd *Board) getBoardState(row int, col int) int {
