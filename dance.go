@@ -50,9 +50,7 @@ func process_dance(brd Board, t time.Duration) error {
 								amt = (1 + amt) * decay
 							}
 
-							brd.DrawPixel(x, y, MakeColor(int(amt*float32(dw[i].color.R)),
-								int(amt*float32(dw[i].color.G)),
-								int(amt*float32(dw[i].color.B))))
+							brd.DrawPixel(x, y, dw[i].color.Scale(amt))
 						}
 					}
 				}

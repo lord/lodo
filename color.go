@@ -15,6 +15,14 @@ func MakeColor(r, g, b int) Color {
 	}
 }
 
+func (c Color) Scale(amt float32) Color {
+	return MakeColor(
+		int(amt*float32(c.R)),
+		int(amt*float32(c.G)),
+		int(amt*float32(c.B)),
+	)
+}
+
 func randomColor() Color {
 	t := time.Now().UnixNano()
 	r := rand.New(rand.NewSource(t))
