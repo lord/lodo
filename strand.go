@@ -53,7 +53,11 @@ func (s *Strand) GetColor(ledNumber int) Color {
 }
 
 func (s *Strand) SetColor(ledNumber int, c Color) {
-	s.buffer[ledNumber] = c
+	if c.A == 1 {
+		s.buffer[ledNumber] = c
+	} else {
+		s.buffer[ledNumber] = s.buffer[ledNumber].AddAlphaColor(c)
+	}
 }
 
 func (s *Strand) Save() {

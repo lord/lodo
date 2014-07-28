@@ -5,6 +5,7 @@ import "math/rand"
 
 type Color struct {
 	R, G, B int
+	A       float64
 }
 
 func MakeColor(r, g, b int) Color {
@@ -12,7 +13,24 @@ func MakeColor(r, g, b int) Color {
 		R: r,
 		G: g,
 		B: b,
+		A: 1,
 	}
+}
+
+func MakeColorAlpha(r, g, b int, a float64) Color {
+	return Color{
+		R: r,
+		G: g,
+		B: b,
+		A: a,
+	}
+}
+
+func (c Color) AddAlphaColor(c2 Color) Color {
+	c.R = int(float64(c2.R-c.R)*c2.A) + c.R
+	c.G = int(float64(c2.G-c.G)*c2.A) + c.G
+	c.B = int(float64(c2.B-c.B)*c2.A) + c.B
+	return c
 }
 
 func (c Color) Scale(amt float32) Color {
