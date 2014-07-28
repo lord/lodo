@@ -25,11 +25,12 @@ func main() {
 
 	for {
 		board.DrawAll(MakeColor(0, 0, 0))
-		err = board.DrawRectOutline(8, 8, 15, 15, MakeColor(255, 0, 0))
+		err = board.DrawRectOutline(9, 9, 15, 15, MakeColor(255, 0, 0))
 		if err != nil {
 			fmt.Println("Error:", err)
 			return
 		}
+		board.DrawRect(0, 0, 10, 19, MakeColorAlpha(200, 200, 200, 0.3))
 		board.Save()
 	}
 
