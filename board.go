@@ -89,13 +89,9 @@ func (brd *Board) DrawSquare(col int, row int, r int, g int, b int) error {
 
 func (brd *Board) DrawAll(r int, g int, b int) error {
 	for i := 0; i < brd.pixelW*brd.pixelH; i++ {
-		brd.SetColor(i, r, g, b)
+		brd.strand.SetColor(i, r, g, b)
 	}
 	return nil
-}
-
-func (brd *Board) SetColor(x int, r int, g int, b int) {
-	brd.strand.SetColor(x, r, g, b)
 }
 
 func (brd *Board) getBoardState(row int, col int) int {
