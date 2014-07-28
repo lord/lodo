@@ -18,7 +18,7 @@ func MakeColor(r, g, b int) Color {
 func randomColor() Color {
 	t := time.Now().UnixNano()
 	r := rand.New(rand.NewSource(t))
-	g := rand.New(rand.NewSource(t+1))
-	b := rand.New(rand.NewSource(t+2))
+	g := rand.New(rand.NewSource(t + 1))
+	b := rand.New(rand.NewSource(t + 2))
 	return MakeColor(r.Intn(255), g.Intn(255), b.Intn(255))
 }

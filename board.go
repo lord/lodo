@@ -43,10 +43,10 @@ func (brd *Board) Save() {
 	brd.strand.Save()
 }
 
-// 
+//
 func getPixelNum(x int, y int) int {
-	col := x/5;
-	row := y/5
+	col := x / 5
+	row := y / 5
 	xPixelInSq := x % 5
 	yPixelInSq := y % 5
 
@@ -79,8 +79,8 @@ func (brd *Board) DrawPixel(x int, y int, r int, g int, b int) error {
 }
 
 func (brd *Board) DrawSquare(col int, row int, r int, g int, b int) error {
-	for i:= 0; i<5; i++{
-		for j:= 0; j<5; j++ {
+	for i := 0; i < 5; i++ {
+		for j := 0; j < 5; j++ {
 			_ = brd.DrawPixel(col*5+i, row*5+j, r, g, b)
 		}
 	}
@@ -88,8 +88,8 @@ func (brd *Board) DrawSquare(col int, row int, r int, g int, b int) error {
 }
 
 func (brd *Board) DrawAll(r int, g int, b int) error {
-	for i:= 0; i<brd.pixelW * brd.pixelH; i++{
-			brd.SetColor(i, r, g, b)
+	for i := 0; i < brd.pixelW*brd.pixelH; i++ {
+		brd.SetColor(i, r, g, b)
 	}
 	return nil
 }
@@ -103,17 +103,17 @@ func (brd *Board) getBoardState(row int, col int) int {
 }
 
 func (brd *Board) printBoardState() error {
-	for r:=0; r<rows; r++ {
-		for c:=0; c<cols; c++ {
+	for r := 0; r < rows; r++ {
+		for c := 0; c < cols; c++ {
 			switch {
 			case brd.sensors.net[r*cols+c] == up:
-				fmt.Printf("-"); 
+				fmt.Printf("-")
 			case brd.sensors.net[r*cols+c] == down:
-				fmt.Printf("X"); 
+				fmt.Printf("X")
 			case brd.sensors.net[r*cols+c] == pressed:
-				fmt.Printf("|"); 
+				fmt.Printf("|")
 			case brd.sensors.net[r*cols+c] == released:
-				fmt.Printf("+"); 
+				fmt.Printf("+")
 			}
 		}
 		fmt.Printf("\n")
