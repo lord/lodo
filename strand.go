@@ -7,13 +7,15 @@ import "errors"
 
 type Strand struct {
 	device   C.int
-	buffer   *C.struct__tcl_buffer
+	cbuf     *C.struct__tcl_buffer
+	buffer   []Color
 	ledCount int
 }
 
 func (s *Strand) Connect(ledCount int) error {
 	s.ledCount = ledCount
 	s.device = C.open_device()
+	s.buffer = make([]Color, ledCount)
 
 	if s.device <= 0 {
 		return errors.New("Device init failed")
@@ -25,8 +27,8 @@ func (s *Strand) Connect(ledCount int) error {
 		return errors.New("SPI init failed")
 	}
 
-	s.buffer = &C.struct__tcl_buffer{}
-	tclStatus := C.tcl_init(s.buffer, C.int(s.ledCount))
+	s.cbuf = &C.struct__tcl_buffer{}
+	tclStatus := C.tcl_init(s.cbuf, C.int(s.ledCount))
 	if tclStatus != 0 {
 		return errors.New("TCL init failed")
 	}
@@ -40,16 +42,23 @@ func (s *Strand) Connect(ledCount int) error {
 }
 
 func (s *Strand) Free() error {
-	C.tcl_free(s.buffer)
+	C.tcl_free(s.cbuf)
 	C.close_device(s.device)
 
 	return nil
 }
 
+func (s *Strand) GetColor(ledNumber int) Color {
+	return s.buffer[ledNumber]
+}
+
 func (s *Strand) SetColor(ledNumber int, c Color) {
-	C.write_gamma_color_to_buffer(s.buffer, C.int(ledNumber), C.uint8_t(c.R), C.uint8_t(c.G), C.uint8_t(c.B))
+	s.buffer[ledNumber] = c
 }
 
 func (s *Strand) Save() {
-	C.send_buffer(s.device, s.buffer)
+	for i, c := range s.buffer {
+		C.write_gamma_color_to_buffer(s.cbuf, C.int(i), C.uint8_t(c.R), C.uint8_t(c.G), C.uint8_t(c.B))
+	}
+	C.send_buffer(s.device, s.cbuf)
 }
