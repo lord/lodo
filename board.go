@@ -13,6 +13,7 @@ package main
 
 import "fmt"
 import "errors"
+import "math"
 
 type Board struct {
 	strand  *Strand
@@ -77,8 +78,82 @@ func (brd *Board) DrawAll(c Color) error {
 	return nil
 }
 
-func (brd *Board) DrawLine(x1, y1, x2, y2 int, c Color) error {
-	return errors.New("Not implemented")
+func ipart(x float64) float64 {
+	return math.Floor(x)
+}
+
+func round(x float64) float64 {
+	return math.Floor(x + 0.5)
+}
+
+func fpart(x float64) float64 {
+	return x - math.Floor(x)
+}
+
+func rfpart(x float64) float64 {
+	return 1 - fpart(x)
+}
+
+func (brd *Board) DrawLine(x0i, y0i, x1i, y1i int, c Color) error {
+	x0, y0, x1, y1 := float64(x0i), float64(y0i), float64(x1i), float64(y1i)
+	steep := (math.Abs(y1-y0) > math.Abs(x1-x0))
+
+	if steep {
+		x0, y0 = y0, x0
+		x1, y1 = y1, x1
+	}
+	if x0 > x1 {
+		x0, x1 = x1, x0
+		y0, y1 = y1, y0
+	}
+
+	dx := x1 - x0
+	dy := y1 - y0
+	gradient := dy / dx
+
+	xend := round(x0)
+	yend := y0 + gradient*(xend-x0)
+	xgap := rfpart(x0 + 0.5)
+	xpxl1 := xend //this will be used in the main loop
+	ypxl1 := ipart(yend)
+	if steep {
+		brd.DrawPixel(int(ypxl1), int(xpxl1), c.WithAlpha(rfpart(yend)*xgap))
+		brd.DrawPixel(int(ypxl1+1), int(xpxl1), c.WithAlpha(fpart(yend)*xgap))
+	} else {
+		brd.DrawPixel(int(xpxl1), int(ypxl1), c.WithAlpha(rfpart(yend)*xgap))
+		brd.DrawPixel(int(xpxl1), int(ypxl1+1), c.WithAlpha(fpart(yend)*xgap))
+	}
+	intery := yend + gradient // first y-intersection for the main loop
+
+	// handle second endpoint
+
+	xend = round(x1)
+	yend = y1 + gradient*(xend-x1)
+	xgap = fpart(x1 + 0.5)
+	xpxl2 := xend //this will be used in the main loop
+	ypxl2 := ipart(yend)
+	if steep {
+		brd.DrawPixel(int(ypxl2), int(xpxl2), c.WithAlpha(rfpart(yend)*xgap))
+		brd.DrawPixel(int(ypxl2+1), int(xpxl2), c.WithAlpha(fpart(yend)*xgap))
+	} else {
+		brd.DrawPixel(int(xpxl2), int(ypxl2), c.WithAlpha(rfpart(yend)*xgap))
+		brd.DrawPixel(int(xpxl2), int(ypxl2+1), c.WithAlpha(fpart(yend)*xgap))
+	}
+
+	// main loop
+
+	for x := xpxl1 + 1; x <= xpxl2-1; x++ {
+		if steep {
+			brd.DrawPixel(int(ipart(intery)), int(x), c.WithAlpha(rfpart(intery)))
+			brd.DrawPixel(int(ipart(intery)+1), int(x), c.WithAlpha(fpart(intery)))
+		} else {
+			brd.DrawPixel(int(x), int(ipart(intery)), c.WithAlpha(rfpart(intery)))
+			brd.DrawPixel(int(x), int(ipart(intery)+1), c.WithAlpha(fpart(intery)))
+		}
+		intery = intery + gradient
+	}
+
+	return nil
 }
 
 func (brd *Board) DrawRect(x1, y1, x2, y2 int, c Color) error {

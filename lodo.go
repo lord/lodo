@@ -30,7 +30,7 @@ func main() {
 			fmt.Println("Error:", err)
 			return
 		}
-		board.DrawRect(0, 0, 10, 19, MakeColorAlpha(200, 200, 200, 0.3))
+		board.DrawLine(10, 0, 10, 19, MakeColor(200, 200, 200))
 		board.Save()
 	}
 
