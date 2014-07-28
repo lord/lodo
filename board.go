@@ -53,7 +53,7 @@ func (brd *Board) Save() {
 
 func (brd *Board) DrawPixel(x int, y int, c Color) error {
 	if x < 0 || x >= brd.pixelW || y < 0 || y >= brd.pixelH {
-		return errors.New("Pixel was drawn outside the board's space")
+		return fmt.Errorf("Pixel was drawn outside the board's space, at %v %v", x, y)
 	}
 	pixelNum := getPixelNum(x, y)
 	brd.strand.SetColor(pixelNum, c)
@@ -82,11 +82,40 @@ func (brd *Board) DrawLine(x1, y1, x2, y2 int, c Color) error {
 }
 
 func (brd *Board) DrawRect(x1, y1, x2, y2 int, c Color) error {
-	return errors.New("Not implemented")
+	for x := x1; x <= x2; x++ {
+		for y := y1; y <= y2; y++ {
+			err := brd.DrawPixel(x, y, c)
+			if err != nil {
+				return err
+			}
+		}
+	}
+	return nil
 }
 
 func (brd *Board) DrawRectOutline(x1, y1, x2, y2 int, c Color) error {
-	return errors.New("Not implemented")
+	for x := x1; x <= x2; x++ {
+		err := brd.DrawPixel(x, y1, c)
+		if err != nil {
+			return err
+		}
+		err = brd.DrawPixel(x, y2, c)
+		if err != nil {
+			return err
+		}
+	}
+
+	for y := y1; y <= y2; y++ {
+		err := brd.DrawPixel(x1, y, c)
+		if err != nil {
+			return err
+		}
+		err = brd.DrawPixel(x2, y, c)
+		if err != nil {
+			return err
+		}
+	}
+	return nil
 }
 
 func (brd *Board) DrawCircle(x1, y1, r int, c Color) error {
@@ -98,6 +127,10 @@ func (brd *Board) DrawCircleOutline(x1, y1, r int, c Color) error {
 }
 
 // func (brd *Board) DrawSprite(x1, y1, r int, c Color) error {
+// 	return errors.New("Not implemented")
+// }
+
+// func (brd *Board) DrawText(x1, y1, r int, c Color) error {
 // 	return errors.New("Not implemented")
 // }
 

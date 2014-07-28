@@ -1,7 +1,8 @@
 package main
 
 import "fmt"
-import "time"
+
+// import "time"
 
 //import "math"
 
@@ -9,7 +10,7 @@ const rows int = 5
 const cols int = 4
 
 func main() {
-	start := time.Now() // starting time in ns
+	// start := time.Now() // starting time in ns
 	board := Board{}
 
 	w := 20
@@ -22,22 +23,32 @@ func main() {
 		return
 	}
 
-	poll := make(chan string)
-	// go board.pollSensors(poll)
 	for {
-		select {
-		case msg := <-poll:
-			_ = msg
-			board.processSensors()
-			go board.pollSensors(poll)
-		default:
+		board.DrawAll(MakeColor(0, 0, 0))
+		err = board.DrawRectOutline(8, 8, 15, 15, MakeColor(255, 0, 0))
+		if err != nil {
+			fmt.Println("Error:", err)
+			return
 		}
-		//		_ = board.printBoardState()
-
-		// process board
-		ns := time.Since(start)
-		process_dance(board, ns)
-
-		board.Save() // draw the board
+		board.Save()
 	}
+
+	// poll := make(chan string)
+	// // go board.pollSensors(poll)
+	// for {
+	// 	select {
+	// 	case msg := <-poll:
+	// 		_ = msg
+	// 		board.processSensors()
+	// 		go board.pollSensors(poll)
+	// 	default:
+	// 	}
+	// 	//		_ = board.printBoardState()
+
+	// 	// process board
+	// 	ns := time.Since(start)
+	// 	process_dance(board, ns)
+
+	// 	board.Save() // draw the board
+	// }
 }
