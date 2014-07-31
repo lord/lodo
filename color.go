@@ -8,6 +8,10 @@ type Color struct {
 	A       float64
 }
 
+var red = MakeColor(200,0,0)
+var blue = MakeColor(0,200,0)
+
+
 func MakeColor(r, g, b int) Color {
 	return Color{
 		R: r,

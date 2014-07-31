@@ -214,10 +214,10 @@ func (brd *Board) DrawCircleOutline(x1, y1, r int, c Color) error {
 /////////////////////////////////
 
 func getPixelNum(x int, y int) int {
-	col := x / 5
-	row := y / 5
-	xPixelInSq := x % 5
-	yPixelInSq := y % 5
+	col := x / 7
+	row := y / 7
+	xPixelInSq := x % 7
+	yPixelInSq := y % 7
 
 	var boardNum, pixelNum int
 
@@ -225,16 +225,16 @@ func getPixelNum(x int, y int) int {
 	if row%2 == 1 {
 		boardNum = row*4 + col
 	} else {
-		boardNum = row*4 + 3 - col
+		boardNum = row*4 + 4 - col
 	}
 
 	if yPixelInSq%2 == 1 {
-		pixelNum = yPixelInSq*5 + xPixelInSq
+		pixelNum = yPixelInSq*7 + xPixelInSq
 	} else {
-		pixelNum = yPixelInSq*5 + 4 - xPixelInSq
+		pixelNum = yPixelInSq*7 + 6 - xPixelInSq
 	}
 
-	return boardNum*25 + pixelNum
+	return boardNum*49 + pixelNum
 }
 
 func (brd *Board) getBoardState(row int, col int) int {

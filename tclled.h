@@ -22,12 +22,7 @@
  * write_gamma_color are designed to write to the appropriate data to memory
  * with a properly calculated flag byte.
  */
-typedef struct _tcl_color {
-  uint8_t flag;
-  uint8_t blue;
-  uint8_t green;
-  uint8_t red;
-} tcl_color;
+
 
 /* The tcl_buffer structure is a buffer in which pixel data is stored in
  * in memory prior to being written out to the SPI device for transmission
@@ -40,8 +35,8 @@ typedef struct _tcl_color {
 typedef struct _tcl_buffer {
   int leds; /* number of LEDS */
   size_t size; /* size of buffer */
-  tcl_color *buffer; /* pointer to buffer memory */
-  tcl_color *pixels; /* pointer to start of pixels */
+  uint16_t *buffer; /* pointer to buffer memory */
+  uint16_t *pixels; /* pointer to start of pixels */
 } tcl_buffer;
 
 /* The tcl_init function allocates memory for the pixels in an order that
@@ -75,7 +70,7 @@ int spi_init(int filedes);
  * uint8_t green - The green value between 0 (off) and 255 (full on).
  * uint8_t blue - The blue value between 0 (off) and 255 (full on).
  */
-void write_color(tcl_color *p, uint8_t red, uint8_t green, uint8_t blue);
+void write_color(uint16_t *p, uint8_t red, uint8_t green, uint8_t blue);
 
 void write_gamma_color_to_buffer(tcl_buffer *buf, int position, uint8_t red, uint8_t green, uint8_t blue);
 
@@ -122,7 +117,7 @@ void set_gamma(double gamma_red, double gamma_green, double gamma_blue);
  * uint8_t green - The green value between 0 (off) and 255 (full on).
  * uint8_t blue - The blue value between 0 (off) and 255 (full on).
  */
-void write_gamma_color(tcl_color *p, uint8_t red, uint8_t green, uint8_t blue);
+void write_gamma_color(uint16_t *p, uint8_t red, uint8_t green, uint8_t blue);
 void write_gamma_color_to_buffer(tcl_buffer *buf, int position, uint8_t red, uint8_t green, uint8_t blue);
 
 int open_device();

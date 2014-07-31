@@ -2,7 +2,7 @@ package main
 
 import "fmt"
 
-// import "time"
+import "time"
 
 //import "math"
 
@@ -13,8 +13,8 @@ func main() {
 	// start := time.Now() // starting time in ns
 	board := Board{}
 
-	w := 20
-	h := 25
+	w := 28
+	h := 7
 	err := board.Connect(w, h, cols, rows)
 	defer board.Free()
 
@@ -23,7 +23,26 @@ func main() {
 		return
 	}
 
-	RunServer(&board)
+//	RunServer(&board)
+
+	for { 
+		board.DrawAll(MakeColor(00,0,0))
+		fmt.Printf("#1:red \n");
+		board.Save()
+                time.Sleep(500 * time.Millisecond)
+
+                board.DrawAll(MakeColor(255,255,255))
+		fmt.Printf("#2:green\n")
+		board.Save()
+		time.Sleep(500 * time.Millisecond)
+               
+
+                board.DrawAll(MakeColor(0,0,200))
+		fmt.Printf("#2:blue\n")
+		board.Save()
+		time.Sleep(500 * time.Millisecond)
+
+	}
 
 	// for {
 	// 	board.DrawAll(MakeColor(0, 0, 0))
@@ -51,7 +70,6 @@ func main() {
 	// 	// process board
 	// 	ns := time.Since(start)
 	// 	process_dance(board, ns)
-
 	// 	board.Save() // draw the board
 	// }
 }
