@@ -59,7 +59,7 @@ func (s *Strand) SetColor(ledNumber int, c Color) {
 		color = s.buffer[ledNumber].AddAlphaColor(c)
 	}
 	s.buffer[ledNumber] = color
-	C.write_color_to_buffer(s.cbuf, C.int(i), C.uint8_t(color.R), C.uint8_t(color.G), C.uint8_t(color.B))
+	C.write_color_to_buffer(s.cbuf, C.int(ledNumber), C.uint8_t(color.R), C.uint8_t(color.G), C.uint8_t(color.B))
 }
 
 func (s *Strand) Save() {
