@@ -95,7 +95,7 @@ void write_frame(uint16_t *p, uint8_t red, uint8_t green, uint8_t blue) {
   data |= blue & 0x1F;
   data <<= 5;
   data |= red & 0x1F;
-  data |= 0x8000; 
+  data |= 0x8000;
   *p=data;
 }
 

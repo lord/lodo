@@ -21,7 +21,6 @@ func (s *Strand) Connect(ledCount int) error {
 		return errors.New("Device init failed")
 	}
 
-	C.set_gamma(2.2, 2.2, 2.2)
 	spiStatus := C.spi_init(s.device)
 	if spiStatus != 0 {
 		return errors.New("SPI init failed")
@@ -53,16 +52,16 @@ func (s *Strand) GetColor(ledNumber int) Color {
 }
 
 func (s *Strand) SetColor(ledNumber int, c Color) {
+	var color Color
 	if c.A == 1 {
-		s.buffer[ledNumber] = c
+		color = c
 	} else {
-		s.buffer[ledNumber] = s.buffer[ledNumber].AddAlphaColor(c)
+		color = s.buffer[ledNumber].AddAlphaColor(c)
 	}
+	s.buffer[ledNumber] = color
+	C.write_color_to_buffer(s.cbuf, C.int(i), C.uint8_t(color.R), C.uint8_t(color.G), C.uint8_t(color.B))
 }
 
 func (s *Strand) Save() {
-	for i, c := range s.buffer {
-		C.write_gamma_color_to_buffer(s.cbuf, C.int(i), C.uint8_t(c.R), C.uint8_t(c.G), C.uint8_t(c.B))
-	}
 	C.send_buffer(s.device, s.cbuf)
 }
