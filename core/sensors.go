@@ -1,4 +1,4 @@
-package main
+package core
 
 // #cgo LDFLAGS:  -lpruio -L"/usr/local/lib/freebasic/linux/" -lfb -lpthread -lprussdrv -ltermcap -lsupc++
 // #include "sensors.h"

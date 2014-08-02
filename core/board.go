@@ -9,7 +9,7 @@ The board sensors map to the same.
 
 */
 
-package main
+package core
 
 import "fmt"
 import "errors"
@@ -208,6 +208,17 @@ func (brd *Board) DrawCircleOutline(x1, y1, r int, c Color) error {
 // func (brd *Board) DrawText(x1, y1, r int, c Color) error {
 // 	return errors.New("Not implemented")
 // }
+
+func (board *Board) RefreshBoard() {
+	select {
+	case msg := <-poll:
+		_ = msg
+		board.processSensors()
+		go board.pollSensors(poll)
+		fmt.Println("foo")
+	default:
+	}
+}
 
 /////////////////////////////////
 // INTERNAL FUNCTIONS

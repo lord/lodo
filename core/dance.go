@@ -1,4 +1,4 @@
-package main
+package core
 
 //import "errors"
 import "time"
@@ -17,7 +17,7 @@ type dwave struct {
 
 var dw [30]dwave
 
-func process_dance(brd Board, t time.Duration) error {
+func ProcessDance(brd Board, t time.Duration) error {
 	brd.DrawAll(MakeColor(0, 0, 0))
 	for row := 0; row < 5; row++ {
 		for col := 0; col < 4; col++ {

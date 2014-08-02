@@ -1,4 +1,4 @@
-package main
+package core
 
 // #cgo LDFLAGS: -lm
 // #include "tclled.h"
