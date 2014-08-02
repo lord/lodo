@@ -36,7 +36,7 @@ func (brd *Board) Connect(pixelW int, pixelH int, squareW int, squareH int) erro
 	brd.strand = &Strand{}
 	brd.sensors = &Sensors{}
 	brd.sensors.initSensors()
-	return brd.strand.Connect(pixelW * pixelH)
+	return brd.strand.Connect(mapLedColor(pixelW * pixelH))
 }
 
 func (brd *Board) Free() {
@@ -57,7 +57,7 @@ func (brd *Board) DrawPixel(x int, y int, c Color) error {
 		return fmt.Errorf("Pixel was drawn outside the board's space, at %v %v", x, y)
 	}
 	pixelNum := getPixelNum(x, y)
-	brd.strand.SetColor(pixelNum, c)
+	brd.setColor(pixelNum, c)
 
 	return nil
 }
@@ -73,7 +73,7 @@ func (brd *Board) DrawSquare(col int, row int, c Color) error {
 
 func (brd *Board) DrawAll(c Color) error {
 	for i := 0; i < brd.pixelW*brd.pixelH; i++ {
-		brd.strand.SetColor(i, c)
+		brd.setColor(i, c)
 	}
 	return nil
 }
@@ -241,6 +241,10 @@ func (brd *Board) getBoardState(row int, col int) int {
 	return brd.sensors.getBoardState(row, col)
 }
 
+func setColor(led int, color Color) {
+	brd.strand.SetColor(mapLedColor(led), color)
+}
+
 func (brd *Board) printBoardState() error {
 	for r := 0; r < rows; r++ {
 		for c := 0; c < cols; c++ {
@@ -268,4 +272,8 @@ func (brd *Board) pollSensors(poll chan string) {
 
 func (brd *Board) processSensors() {
 	brd.sensors.processSensors()
+}
+
+func mapLedColor(i int) int {
+	return i + i/49
 }
