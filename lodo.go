@@ -13,47 +13,45 @@ func main() {
 	// start := time.Now() // starting time in ns
 	board := Board{}
 
-	w := 28
-	h := 7
+	w := 35
+	h := 28
 	err := board.Connect(w, h, cols, rows)
 	defer board.Free()
-
 	if err != nil {
 		fmt.Println("Error:", err)
 		return
 	}
 
-//	RunServer(&board)
-
-	for { 
-		board.DrawAll(MakeColor(00,0,0))
-		fmt.Printf("#1:red \n");
-		board.Save()
-                time.Sleep(500 * time.Millisecond)
-
-                board.DrawAll(MakeColor(255,255,255))
-		fmt.Printf("#2:green\n")
-		board.Save()
-		time.Sleep(500 * time.Millisecond)
-               
-
-                board.DrawAll(MakeColor(0,0,200))
-		fmt.Printf("#2:blue\n")
-		board.Save()
-		time.Sleep(500 * time.Millisecond)
-
-	}
-
 	// for {
-	// 	board.DrawAll(MakeColor(0, 0, 0))
-	// 	err = board.DrawRectOutline(9, 9, 15, 15, MakeColor(255, 0, 0))
-	// 	if err != nil {
-	// 		fmt.Println("Error:", err)
-	// 		return
-	// 	}
-	// 	board.DrawLine(10, 0, 10, 19, MakeColor(200, 200, 200))
+	// 	board.DrawAll(MakeColor(00, 0, 0))
+	// 	fmt.Printf("#1:red \n")
 	// 	board.Save()
+	// 	time.Sleep(500 * time.Millisecond)
+
+	// 	board.DrawAll(MakeColor(255, 255, 255))
+	// 	fmt.Printf("#2:green\n")
+	// 	board.Save()
+	// 	time.Sleep(500 * time.Millisecond)
+
+	// 	board.DrawAll(MakeColor(0, 0, 200))
+	// 	fmt.Printf("#2:blue\n")
+	// 	board.Save()
+	// 	time.Sleep(500 * time.Millisecond)
+
 	// }
+
+	for {
+		for y := 0; y < h; y++ {
+			for x := 0; x < w; x++ {
+				board.DrawAll(MakeColor(0, 0, 0))
+				board.DrawPixel(x, y, MakeColor(20, 20, 20))
+				board.Save()
+				time.Sleep(50 * time.Millisecond)
+			}
+		}
+		// err = board.DrawRectOutline(9, 9, 15, 15, MakeColor(20, 0, 0))
+		// board.DrawLine(0, 0, 10, 19, MakeColor(20, 20, 20))
+	}
 
 	// poll := make(chan string)
 	// // go board.pollSensors(poll)
