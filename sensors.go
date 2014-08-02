@@ -52,7 +52,7 @@ func (sensors *Sensors) readSensors() error {
 }
 
 func (sensors *Sensors) processSensors() error {
-	var thd = C.int(10000)
+	var thd = C.int(16000)
 	for i := 0; i < rows*cols; i++ {
 		sensors.last[i] = sensors.net[i]
 		sensors.net[i] = up

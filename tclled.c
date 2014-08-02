@@ -75,14 +75,6 @@ void write_color(uint16_t *p, uint8_t red, uint8_t green, uint8_t blue) {
   write_frame(p,red,green,blue);
 }
 
-void read_color(uint16_t p, uint8_t *red, uint8_t *green, uint8_t *blue) {
-  *red   = p & 0x1F;
-  p >>= 5;
-  *blue  =  (uint8_t)(p & 0x1F);
-  p >>=  5;
-  *green = (uint8_t)(p & 0x1F);
-}
-
 int send_buffer(int filedes, tcl_buffer *buf) {
   int ret;
   ret = (int)write_all(filedes,buf->buffer,buf->size);

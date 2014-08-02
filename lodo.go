@@ -10,7 +10,7 @@ const rows int = 5
 const cols int = 4
 
 func main() {
-	// start := time.Now() // starting time in ns
+	start := time.Now() // starting time in ns
 	board := Board{}
 
 	w := 35
@@ -23,51 +23,34 @@ func main() {
 	}
 
 	// for {
-	// 	board.DrawAll(MakeColor(00, 0, 0))
-	// 	fmt.Printf("#1:red \n")
-	// 	board.Save()
-	// 	time.Sleep(500 * time.Millisecond)
-
-	// 	board.DrawAll(MakeColor(255, 255, 255))
-	// 	fmt.Printf("#2:green\n")
-	// 	board.Save()
-	// 	time.Sleep(500 * time.Millisecond)
-
-	// 	board.DrawAll(MakeColor(0, 0, 200))
-	// 	fmt.Printf("#2:blue\n")
-	// 	board.Save()
-	// 	time.Sleep(500 * time.Millisecond)
-
-	// }
-
-	for {
-		for y := 0; y < h; y++ {
-			for x := 0; x < w; x++ {
-				board.DrawAll(MakeColor(0, 0, 0))
-				board.DrawPixel(x, y, MakeColor(20, 20, 20))
-				board.Save()
-				time.Sleep(50 * time.Millisecond)
-			}
-		}
-		// err = board.DrawRectOutline(9, 9, 15, 15, MakeColor(20, 0, 0))
-		// board.DrawLine(0, 0, 10, 19, MakeColor(20, 20, 20))
-	}
-
-	// poll := make(chan string)
-	// // go board.pollSensors(poll)
-	// for {
-	// 	select {
-	// 	case msg := <-poll:
-	// 		_ = msg
-	// 		board.processSensors()
-	// 		go board.pollSensors(poll)
-	// 	default:
+	// 	for y := 0; y < h; y++ {
+	// 		for x := 0; x < w; x++ {
+	// 			board.DrawAll(MakeColor(0, 0, 0))
+	// 			board.DrawPixel(x, y, MakeColor(20, 20, 20))
+	// 			board.Save()
+	// 			time.Sleep(50 * time.Millisecond)
+	// 		}
 	// 	}
-	// 	//		_ = board.printBoardState()
-
-	// 	// process board
-	// 	ns := time.Since(start)
-	// 	process_dance(board, ns)
-	// 	board.Save() // draw the board
+	// err = board.DrawRectOutline(9, 9, 15, 15, MakeColor(20, 0, 0))
+	// board.DrawLine(0, 0, 10, 19, MakeColor(20, 20, 20))
 	// }
+
+	poll := make(chan string)
+	go board.pollSensors(poll)
+	for {
+		select {
+		case msg := <-poll:
+			_ = msg
+			board.processSensors()
+			go board.pollSensors(poll)
+			fmt.Println("foo")
+		default:
+		}
+		_ = board.printBoardState()
+
+		// process board
+		ns := time.Since(start)
+		process_dance(board, ns)
+		board.Save() // draw the board
+	}
 }
