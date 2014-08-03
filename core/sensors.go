@@ -46,6 +46,7 @@ func (sensors *Sensors) stopSensors() error {
 	return nil
 }
 
+// I think this is backwards, actually x,y, not y,x as the args would suggest?
 func (sensors *Sensors) getBoardState(row int, col int) int {
 	return sensors.net[row*4+col]
 }

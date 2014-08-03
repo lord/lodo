@@ -57,7 +57,8 @@ func (brd *Board) Save() {
 
 func (brd *Board) DrawPixel(x, y int, c Color) {
 	if x < 0 || x >= brd.pixelW || y < 0 || y >= brd.pixelH {
-		fmt.Println("Pixel was drawn outside the board's space, at %v %v", x, y)
+		fmt.Println("Pixel was drawn outside the board's space, at", x, y)
+		return
 	}
 	pixelNum := getPixelNum(x, y, brd.squareW, brd.squareH)
 	brd.setColor(pixelNum, c)
