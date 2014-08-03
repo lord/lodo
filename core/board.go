@@ -201,6 +201,26 @@ func (board *Board) RefreshSensors() {
 	}
 }
 
+func (brd *Board) CheckPressed(row int, col int) bool {
+	state := brd.sensors.getBoardState(row, col)
+	return state == 3
+}
+
+func (brd *Board) CheckDown(row int, col int) bool {
+	state := brd.sensors.getBoardState(row, col)
+	return state == 2 || state == 3
+}
+
+func (brd *Board) CheckUp(row int, col int) bool {
+	state := brd.sensors.getBoardState(row, col)
+	return state == 0 || state == 1
+}
+
+func (brd *Board) CheckReleased(row int, col int) bool {
+	state := brd.sensors.getBoardState(row, col)
+	return state == 1
+}
+
 /////////////////////////////////
 // INTERNAL FUNCTIONS
 /////////////////////////////////
@@ -227,10 +247,6 @@ func getPixelNum(x, y, sqW, sqH int) int {
 	}
 
 	return boardNum*49 + pixelNum
-}
-
-func (brd *Board) getBoardState(row int, col int) int {
-	return brd.sensors.getBoardState(row, col)
 }
 
 func (brd *Board) setColor(led int, color Color) {
