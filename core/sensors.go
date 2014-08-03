@@ -14,6 +14,8 @@ type Sensors struct {
 	last  [24]int
 	net   [24]int
 	pruio *C.struct_PruIo
+	rows  int
+	cols  int
 }
 
 const (
@@ -27,10 +29,12 @@ var sensors Sensors
 
 //var sensorMap = []int { 5,7,1,3,1,7,5,3,8,6,4,2,4,2,8,6,13,15,9, 11,9, 15,13,11,16,14,12,10,12,10,16,14,21,23,17,19,17,23,21,19,24,22,20,18,20,18,24,22}
 
-func (sensors *Sensors) initSensors() error {
+func (sensors *Sensors) initSensors(rows, cols int) error {
+	sensors.rows = rows
+	sensors.cols = cols
 	sensors.pruio = C.pruio_new(0, 0x98, 0, 1)
 	C.initSensors(sensors.pruio)
-	for i := 0; i < rows*cols; i++ {
+	for i := 0; i < sensors.rows*sensors.cols; i++ {
 		sensors.last[i] = up
 		sensors.net[i] = up
 	}
@@ -53,7 +57,7 @@ func (sensors *Sensors) readSensors() error {
 
 func (sensors *Sensors) processSensors() error {
 	var thd = C.int(16000)
-	for i := 0; i < rows*cols; i++ {
+	for i := 0; i < sensors.rows*sensors.cols; i++ {
 		sensors.last[i] = sensors.net[i]
 		sensors.net[i] = up
 	}
@@ -83,7 +87,7 @@ func (sensors *Sensors) processSensors() error {
 			sensors.net[7+bank*8] = down
 		}
 	}
-	for i := 0; i < rows*cols; i++ {
+	for i := 0; i < sensors.rows*sensors.cols; i++ {
 		if sensors.net[i] == down && (sensors.last[i] == up || sensors.last[i] == released) {
 			sensors.net[i] = pressed
 		}

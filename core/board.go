@@ -22,6 +22,7 @@ type Board struct {
 	pixelH  int
 	squareW int
 	squareH int
+	poll    chan string
 }
 
 /////////////////////////////////
@@ -35,7 +36,9 @@ func (brd *Board) Connect(pixelW int, pixelH int, squareW int, squareH int) erro
 	brd.squareH = squareH
 	brd.strand = &Strand{}
 	brd.sensors = &Sensors{}
-	brd.sensors.initSensors()
+	brd.sensors.initSensors(squareW, squareH)
+	brd.poll = make(chan string)
+	go brd.pollSensors(brd.poll)
 	return brd.strand.Connect(mapLedColor(pixelW * pixelH))
 }
 
@@ -52,20 +55,18 @@ func (brd *Board) Save() {
 // DRAWING FUNCTIONS
 /////////////////////////////////
 
-func (brd *Board) DrawPixel(x int, y int, c Color) error {
+func (brd *Board) DrawPixel(x, y int, c Color) {
 	if x < 0 || x >= brd.pixelW || y < 0 || y >= brd.pixelH {
-		return fmt.Errorf("Pixel was drawn outside the board's space, at %v %v", x, y)
+		fmt.Println("Pixel was drawn outside the board's space, at %v %v", x, y)
 	}
-	pixelNum := getPixelNum(x, y)
+	pixelNum := getPixelNum(x, y, brd.squareW, brd.squareH)
 	brd.setColor(pixelNum, c)
-
-	return nil
 }
 
 func (brd *Board) DrawSquare(col int, row int, c Color) error {
-	for i := 0; i < 5; i++ {
-		for j := 0; j < 5; j++ {
-			_ = brd.DrawPixel(col*5+i, row*5+j, c)
+	for i := 0; i < 7; i++ {
+		for j := 0; j < 7; j++ {
+			brd.DrawPixel(col*7+i, row*7+j, c)
 		}
 	}
 	return nil
@@ -94,7 +95,7 @@ func rfpart(x float64) float64 {
 	return 1 - fpart(x)
 }
 
-func (brd *Board) DrawLine(x0i, y0i, x1i, y1i int, c Color) error {
+func (brd *Board) DrawLine(x0i, y0i, x1i, y1i int, c Color) {
 	x0, y0, x1, y1 := float64(x0i), float64(y0i), float64(x1i), float64(y1i)
 	steep := (math.Abs(y1-y0) > math.Abs(x1-x0))
 
@@ -152,45 +153,26 @@ func (brd *Board) DrawLine(x0i, y0i, x1i, y1i int, c Color) error {
 		}
 		intery = intery + gradient
 	}
-
-	return nil
 }
 
-func (brd *Board) DrawRect(x1, y1, x2, y2 int, c Color) error {
+func (brd *Board) DrawRect(x1, y1, x2, y2 int, c Color) {
 	for x := x1; x <= x2; x++ {
 		for y := y1; y <= y2; y++ {
-			err := brd.DrawPixel(x, y, c)
-			if err != nil {
-				return err
-			}
+			brd.DrawPixel(x, y, c)
 		}
 	}
-	return nil
 }
 
-func (brd *Board) DrawRectOutline(x1, y1, x2, y2 int, c Color) error {
+func (brd *Board) DrawRectOutline(x1, y1, x2, y2 int, c Color) {
 	for x := x1; x <= x2; x++ {
-		err := brd.DrawPixel(x, y1, c)
-		if err != nil {
-			return err
-		}
-		err = brd.DrawPixel(x, y2, c)
-		if err != nil {
-			return err
-		}
+		brd.DrawPixel(x, y1, c)
+		brd.DrawPixel(x, y2, c)
 	}
 
 	for y := y1 + 1; y <= y2-1; y++ {
-		err := brd.DrawPixel(x1, y, c)
-		if err != nil {
-			return err
-		}
-		err = brd.DrawPixel(x2, y, c)
-		if err != nil {
-			return err
-		}
+		brd.DrawPixel(x1, y, c)
+		brd.DrawPixel(x2, y, c)
 	}
-	return nil
 }
 
 func (brd *Board) DrawCircle(x1, y1, r int, c Color) error {
@@ -209,13 +191,12 @@ func (brd *Board) DrawCircleOutline(x1, y1, r int, c Color) error {
 // 	return errors.New("Not implemented")
 // }
 
-func (board *Board) RefreshBoard() {
+func (board *Board) RefreshSensors() {
 	select {
-	case msg := <-poll:
+	case msg := <-board.poll:
 		_ = msg
 		board.processSensors()
-		go board.pollSensors(poll)
-		fmt.Println("foo")
+		go board.pollSensors(board.poll)
 	default:
 	}
 }
@@ -224,7 +205,7 @@ func (board *Board) RefreshBoard() {
 // INTERNAL FUNCTIONS
 /////////////////////////////////
 
-func getPixelNum(x int, y int) int {
+func getPixelNum(x, y, sqW, sqH int) int {
 	col := x / 7
 	row := y / 7
 	xPixelInSq := x % 7
@@ -232,11 +213,11 @@ func getPixelNum(x int, y int) int {
 
 	var boardNum, pixelNum int
 
-	// NOTE: this is hardcoded for a 4 x 5 board with 49px/square
+	// NOTE: this is hardcoded for 49px/square
 	if row%2 == 0 {
-		boardNum = row*5 + col
+		boardNum = row*sqW + col
 	} else {
-		boardNum = row*5 + 4 - col
+		boardNum = row*sqW + (sqW - 1) - col
 	}
 
 	if yPixelInSq%2 == 1 {
@@ -257,16 +238,16 @@ func (brd *Board) setColor(led int, color Color) {
 }
 
 func (brd *Board) printBoardState() error {
-	for r := 0; r < rows; r++ {
-		for c := 0; c < cols; c++ {
+	for r := 0; r < brd.squareH; r++ {
+		for c := 0; c < brd.squareW; c++ {
 			switch {
-			case brd.sensors.net[r*cols+c] == up:
+			case brd.sensors.net[r*brd.squareW+c] == up:
 				fmt.Printf("-")
-			case brd.sensors.net[r*cols+c] == down:
+			case brd.sensors.net[r*brd.squareW+c] == down:
 				fmt.Printf("X")
-			case brd.sensors.net[r*cols+c] == pressed:
+			case brd.sensors.net[r*brd.squareW+c] == pressed:
 				fmt.Printf("|")
-			case brd.sensors.net[r*cols+c] == released:
+			case brd.sensors.net[r*brd.squareW+c] == released:
 				fmt.Printf("+")
 			}
 		}
