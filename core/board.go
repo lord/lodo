@@ -202,28 +202,59 @@ func (board *Board) RefreshSensors() {
 }
 
 func (brd *Board) CheckPressed(row int, col int) bool {
-	state := brd.sensors.getBoardState(row, col)
+	state := brd.getSensorState(row, col)
 	return state == 3
 }
 
 func (brd *Board) CheckDown(row int, col int) bool {
-	state := brd.sensors.getBoardState(row, col)
+	state := brd.getSensorState(row, col)
 	return state == 2 || state == 3
 }
 
 func (brd *Board) CheckUp(row int, col int) bool {
-	state := brd.sensors.getBoardState(row, col)
+	state := brd.getSensorState(row, col)
 	return state == 0 || state == 1
 }
 
 func (brd *Board) CheckReleased(row int, col int) bool {
-	state := brd.sensors.getBoardState(row, col)
+	state := brd.getSensorState(row, col)
 	return state == 1
 }
 
 /////////////////////////////////
 // INTERNAL FUNCTIONS
 /////////////////////////////////
+
+func (brd *Board) getSensorState(col, row int) int {
+	// TODO This mapping code is hackish and disgusting
+	// Remove and fix sensors.go instead once sensor
+	// placement has been finalized.
+	trueRow := 3
+	trueCol := 0
+	if row == 3 {
+		switch col + row {
+		case 3:
+			trueCol = 1
+			trueRow = 0
+		case 4:
+			trueCol = 0
+			trueRow = 0
+		case 5:
+			trueCol = 0
+			trueRow = 1
+		case 6:
+			trueCol = 0
+			trueRow = 3
+		case 7:
+			trueCol = 0
+			trueRow = 2
+		default:
+			trueCol = 0
+			trueRow = 3
+		}
+	}
+	return brd.sensors.getBoardState(trueCol, trueRow)
+}
 
 func getPixelNum(x, y, sqW, sqH int) int {
 	col := x / 7
