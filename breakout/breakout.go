@@ -2,18 +2,17 @@ package breakout
 
 import "github.com/lord/lodo/core"
 
+const boardWidth = 35
+const boardHeight = 28
+
 func Run(board core.Board) {
+	b := makeBall(10, 7, 2, 0.1, 0.2)
 	black := core.MakeColor(0, 0, 0)
 	for {
 		board.RefreshSensors()
 		board.DrawAll(black)
-		for x := 0; x < 5; x++ {
-			for y := 0; y < 4; y++ {
-				if board.CheckPressed(x, y) {
-					board.DrawSquare(x, y, core.MakeColor(20, 20, 20))
-				}
-			}
-		}
+		b.step()
+		b.draw(&board)
 		board.Save()
 	}
 }
