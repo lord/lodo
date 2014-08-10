@@ -17,7 +17,7 @@
 #define P4 P8_19
 
 #define POLL 3
-#define PAUSE 200
+#define PAUSE 1000
 #define SENSORS 80 //5*8*2
 
 int isleep(unsigned int mseconds)
@@ -55,13 +55,10 @@ int readSensors(PruIo *Io, int* o) {
       pruio_gpio_out(Io, P4, v4);
       isleep(PAUSE);
       o[i+00] += Io->Value[1]/POLL;
-      isleep(PAUSE);
       o[i+16] += Io->Value[2]/POLL;
-      isleep(PAUSE);
-      o[i+32] += Io->Value[3]/POLL;
-      isleep(PAUSE);
+      //o[i+32] += Io->Value[3]/POLL;
       o[i+48] += Io->Value[4]/POLL;
-      isleep(PAUSE);
+      o[i+32] += Io->Value[3]/POLL;
       o[i+64] += Io->Value[5]/POLL;
     }
   }
@@ -89,7 +86,8 @@ int initSensors(PruIo *io) {
     printf("failed setting P4 (%s)\n", io->Errr); 
     return 1;
   }
-  if (pruio_config(io, 0, 0x1FE, 0, 4, 0)) {
+//  if (pruio_config(io, 0, 0x1FE, 0, 4, 0)) {
+  if (pruio_config(io, 1, 0xFE, 0, 4, 4)) {
     printf("config failed (%s)\n", io->Errr);
     return 1;
   }

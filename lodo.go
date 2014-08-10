@@ -11,7 +11,7 @@ func main() {
 	board := core.Board{}
 
 	w := 35
-	h := 28
+	h := 42
 	cols := 5
 	rows := 8  
 	err := board.Connect(w, h, cols, rows)

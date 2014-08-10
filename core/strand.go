@@ -13,7 +13,7 @@ type Strand struct {
 }
 
 func (s *Strand) Connect(ledCount int) error {
-	s.ledCount = ledCount + 300
+	s.ledCount = ledCount + 100
 	s.device = C.open_device()
 	s.buffer = make([]Color, ledCount)
 
