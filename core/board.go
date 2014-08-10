@@ -49,7 +49,7 @@ func (brd *Board) Free() {
 
 func (brd *Board) Save() {
 	brd.strand.Save()
-        brd.printBoardState()
+	brd.printBoardState()
 }
 
 /////////////////////////////////
@@ -58,7 +58,7 @@ func (brd *Board) Save() {
 
 func (brd *Board) DrawPixel(x, y int, c Color) {
 	if x < 0 || x >= brd.pixelW || y < 0 || y >= brd.pixelH {
-		//fmt.Println("Pixel was drawn outside the board's space, at", x, y)
+		fmt.Println("Pixel was drawn outside the board's space, at", x, y)
 		return
 	}
 	pixelNum := getPixelNum(x, y, brd.squareW, brd.squareH)
@@ -165,9 +165,9 @@ func (brd *Board) DrawRect(x1, y1, x2, y2 int, c Color) {
 	}
 }
 
-func (brd *Board) FillSquare(x, y int, c Color) { 
-fmt.Printf("Fill Square: %d %d\n", x, y)
-	brd.DrawRect(x * 7, y * 7, x*7+6, y*7+6,  c)
+func (brd *Board) FillSquare(x, y int, c Color) {
+	fmt.Printf("Fill Square: %d %d\n", x, y)
+	brd.DrawRect(x*7, y*7, x*7+6, y*7+6, c)
 }
 
 func (brd *Board) DrawRectOutline(x1, y1, x2, y2 int, c Color) {
@@ -214,7 +214,7 @@ func (brd *Board) CheckPressed(row int, col int) bool {
 }
 
 func (brd *Board) CheckDown(col, row int) bool {
-	state := brd.getSensorState( col,row)
+	state := brd.getSensorState(col, row)
 	return state == 2 || state == 3
 }
 
@@ -266,8 +266,8 @@ func (brd *Board) setColor(led int, color Color) {
 
 func (brd *Board) printBoardState() error {
 	for r := 0; r < brd.squareH; r++ {
-		for c := brd.squareW-1; c>=0; c-- {
-			state := brd.sensors.getBoardState(c,r)
+		for c := brd.squareW - 1; c >= 0; c-- {
+			state := brd.sensors.getBoardState(c, r)
 			switch {
 			case state == up:
 				fmt.Printf("-")
