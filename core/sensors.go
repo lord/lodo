@@ -10,9 +10,9 @@ import "fmt"
 const sensorCount = 48
 
 type Sensors struct {
-	raw   [48]C.int
-	last  [24]int
-	net   [24]int
+	raw   [80]C.int
+	last  [40]int
+	net   [40]int
 	pruio *C.struct_PruIo
 	rows  int
 	cols  int
@@ -26,8 +26,6 @@ const (
 )
 
 var sensors Sensors
-
-//var sensorMap = []int { 5,7,1,3,1,7,5,3,8,6,4,2,4,2,8,6,13,15,9, 11,9, 15,13,11,16,14,12,10,12,10,16,14,21,23,17,19,17,23,21,19,24,22,20,18,20,18,24,22}
 
 func (sensors *Sensors) initSensors(rows, cols int) error {
 	sensors.rows = rows
@@ -47,8 +45,8 @@ func (sensors *Sensors) stopSensors() error {
 }
 
 // I think this is backwards, actually x,y, not y,x as the args would suggest?
-func (sensors *Sensors) getBoardState(row int, col int) int {
-	return sensors.net[row*4+col]
+func (sensors *Sensors) getBoardState(x int, y int) int {
+	return sensors.net[y+x*8]
 }
 
 func (sensors *Sensors) readSensors() error {
@@ -57,12 +55,13 @@ func (sensors *Sensors) readSensors() error {
 }
 
 func (sensors *Sensors) processSensors() error {
-	var thd = C.int(16000)
+	var thd = C.int(24000)
 	for i := 0; i < sensors.rows*sensors.cols; i++ {
 		sensors.last[i] = sensors.net[i]
 		sensors.net[i] = up
 	}
-	for bank := 0; bank < 3; bank++ {
+
+	for bank := 0; bank < 5; bank++ {
 		if sensors.raw[2+bank*16] > thd || sensors.raw[4+bank*16] > thd {
 			sensors.net[0+bank*8] = down
 		}
@@ -87,7 +86,13 @@ func (sensors *Sensors) processSensors() error {
 		if sensors.raw[8+bank*16] > thd || sensors.raw[14+bank*16] > thd {
 			sensors.net[7+bank*8] = down
 		}
+                fmt.Printf("|| %.5d %.5d %.5d %.5d || %.5d %.5d %.5d %.5d ||%.5d %.5d %.5d %.5d || %.5d %.5d %.5d %.5d ||  \n", 
+                            sensors.raw[0+bank*16],sensors.raw[1+bank*16],sensors.raw[2+bank*16],sensors.raw[3+bank*16],
+                            sensors.raw[4+bank*16],sensors.raw[5+bank*16],sensors.raw[6+bank*16],sensors.raw[7+bank*16],
+                            sensors.raw[8+bank*16],sensors.raw[9+bank*16],sensors.raw[10+bank*16],sensors.raw[11+bank*16],
+                            sensors.raw[12+bank*16],sensors.raw[13+bank*16],sensors.raw[14+bank*16],sensors.raw[15+bank*16])
 	}
+       fmt.Printf("\n")
 	for i := 0; i < sensors.rows*sensors.cols; i++ {
 		if sensors.net[i] == down && (sensors.last[i] == up || sensors.last[i] == released) {
 			sensors.net[i] = pressed
@@ -99,22 +104,3 @@ func (sensors *Sensors) processSensors() error {
 	return nil
 }
 
-func (sensors *Sensors) printSensors() error {
-	for bank := 0; bank < 3; bank++ {
-		max := 0
-		for ch := 0; ch < 16; ch++ {
-			if max < int(sensors.raw[bank*16+ch]) {
-				max = int(sensors.raw[bank*16+ch])
-			}
-			if sensors.raw[bank*16+ch] > 10000 {
-				fmt.Printf("X ")
-			} else {
-				fmt.Printf("- ")
-			}
-			//fmt.Printf("%.5d ", int(sensors.raw[bank*16+ch]))
-		}
-		fmt.Printf(" : %d\n", max)
-	}
-	fmt.Printf("\n\n")
-	return nil
-}

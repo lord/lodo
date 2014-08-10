@@ -16,9 +16,9 @@
 #define P3 P8_17
 #define P4 P8_19
 
-#define POLL 10
-#define PAUSE 250
-
+#define POLL 3
+#define PAUSE 200
+#define SENSORS 80 //5*8*2
 
 int isleep(unsigned int mseconds)
 {
@@ -40,7 +40,7 @@ int isleep(unsigned int mseconds)
 
 int readSensors(PruIo *Io, int* o) {
   int i, j, v1, v2, v3, v4;
-  for (i=0; i<48; i++){ 
+  for (i=0; i<SENSORS; i++){ 
     o[i] = 0; 
   }
   for (j=0; j<POLL; j++){
@@ -55,8 +55,14 @@ int readSensors(PruIo *Io, int* o) {
       pruio_gpio_out(Io, P4, v4);
       isleep(PAUSE);
       o[i+00] += Io->Value[1]/POLL;
+      isleep(PAUSE);
       o[i+16] += Io->Value[2]/POLL;
+      isleep(PAUSE);
       o[i+32] += Io->Value[3]/POLL;
+      isleep(PAUSE);
+      o[i+48] += Io->Value[4]/POLL;
+      isleep(PAUSE);
+      o[i+64] += Io->Value[5]/POLL;
     }
   }
   return 0;

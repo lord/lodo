@@ -49,6 +49,7 @@ func (brd *Board) Free() {
 
 func (brd *Board) Save() {
 	brd.strand.Save()
+        brd.printBoardState()
 }
 
 /////////////////////////////////
@@ -57,7 +58,7 @@ func (brd *Board) Save() {
 
 func (brd *Board) DrawPixel(x, y int, c Color) {
 	if x < 0 || x >= brd.pixelW || y < 0 || y >= brd.pixelH {
-		fmt.Println("Pixel was drawn outside the board's space, at", x, y)
+		//fmt.Println("Pixel was drawn outside the board's space, at", x, y)
 		return
 	}
 	pixelNum := getPixelNum(x, y, brd.squareW, brd.squareH)
@@ -164,6 +165,11 @@ func (brd *Board) DrawRect(x1, y1, x2, y2 int, c Color) {
 	}
 }
 
+func (brd *Board) FillSquare(x, y int, c Color) { 
+fmt.Printf("Fill Square: %d %d\n", x, y)
+	brd.DrawRect(x * 7, y * 7, x*7+6, y*7+6,  c)
+}
+
 func (brd *Board) DrawRectOutline(x1, y1, x2, y2 int, c Color) {
 	for x := x1; x <= x2; x++ {
 		brd.DrawPixel(x, y1, c)
@@ -207,8 +213,8 @@ func (brd *Board) CheckPressed(row int, col int) bool {
 	return state == 3
 }
 
-func (brd *Board) CheckDown(row int, col int) bool {
-	state := brd.getSensorState(row, col)
+func (brd *Board) CheckDown(col, row int) bool {
+	state := brd.getSensorState( col,row)
 	return state == 2 || state == 3
 }
 
@@ -227,34 +233,7 @@ func (brd *Board) CheckReleased(row int, col int) bool {
 /////////////////////////////////
 
 func (brd *Board) getSensorState(col, row int) int {
-	// TODO This mapping code is hackish and disgusting
-	// Remove and fix sensors.go instead once sensor
-	// placement has been finalized.
-	trueRow := 3
-	trueCol := 0
-	if row == 3 {
-		switch col + row {
-		case 3:
-			trueCol = 1
-			trueRow = 0
-		case 4:
-			trueCol = 0
-			trueRow = 0
-		case 5:
-			trueCol = 0
-			trueRow = 1
-		case 6:
-			trueCol = 0
-			trueRow = 3
-		case 7:
-			trueCol = 0
-			trueRow = 2
-		default:
-			trueCol = 0
-			trueRow = 3
-		}
-	}
-	return brd.sensors.getBoardState(trueCol, trueRow)
+	return brd.sensors.getBoardState(col, row)
 }
 
 func getPixelNum(x, y, sqW, sqH int) int {
@@ -287,15 +266,16 @@ func (brd *Board) setColor(led int, color Color) {
 
 func (brd *Board) printBoardState() error {
 	for r := 0; r < brd.squareH; r++ {
-		for c := 0; c < brd.squareW; c++ {
+		for c := brd.squareW-1; c>=0; c-- {
+			state := brd.sensors.getBoardState(c,r)
 			switch {
-			case brd.sensors.net[r*brd.squareW+c] == up:
+			case state == up:
 				fmt.Printf("-")
-			case brd.sensors.net[r*brd.squareW+c] == down:
+			case state == down:
 				fmt.Printf("X")
-			case brd.sensors.net[r*brd.squareW+c] == pressed:
+			case state == pressed:
 				fmt.Printf("|")
-			case brd.sensors.net[r*brd.squareW+c] == released:
+			case state == released:
 				fmt.Printf("+")
 			}
 		}
