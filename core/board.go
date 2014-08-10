@@ -182,12 +182,27 @@ func (brd *Board) DrawRectOutline(x1, y1, x2, y2 int, c Color) {
 	}
 }
 
-func (brd *Board) DrawCircle(x1, y1, r int, c Color) error {
+func (brd *Board) DrawCircle(x1, y1, r float64, c Color) error {
 	return errors.New("Not implemented")
 }
 
-func (brd *Board) DrawCircleOutline(x1, y1, r int, c Color) error {
+func (brd *Board) DrawCircleOutline(x1, y1, r float64, c Color) error {
 	return errors.New("Not implemented")
+}
+
+func (brd *Board) DrawSmallCircle(x, y float64, c Color) {
+	drawx := int(x)
+	drawy := int(y)
+	extrax := x - float64(drawx)
+	extray := y - float64(drawy)
+	brd.DrawPixel(drawx, drawy, c.WithAlpha(1-pointDistance(0, 0, extrax, extray)))
+	brd.DrawPixel(drawx+1, drawy, c.WithAlpha(1-pointDistance(1, 0, extrax, extray)))
+	brd.DrawPixel(drawx, drawy+1, c.WithAlpha(1-pointDistance(0, 1, extrax, extray)))
+	brd.DrawPixel(drawx+1, drawy+1, c.WithAlpha(1-pointDistance(1, 1, extrax, extray)))
+}
+
+func pointDistance(x1, y1, x2, y2 float64) float64 {
+	return math.Sqrt((x2-x1)*(x2-x1) + (y2-y1)*(y2-y1))
 }
 
 // func (brd *Board) DrawSprite(x1, y1, r int, c Color) error {
