@@ -21,10 +21,10 @@ func makeBall(x, y, vx, vy float64, c core.Color) ball {
 func (b *ball) step() {
 	b.x += b.vx
 	b.y += b.vy
-	if b.x >= boardWidth {
+	if b.x >= boardWidth-1 {
 		b.vx = math.Abs(b.vx) * -1
 	}
-	if b.y >= boardHeight {
+	if b.y >= boardHeight-1 {
 		b.vy = math.Abs(b.vy) * -1
 	}
 	if b.x <= 0 {

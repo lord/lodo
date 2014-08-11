@@ -37,7 +37,11 @@ func (c Color) AddAlphaColor(c2 Color) Color {
 }
 
 func (c Color) WithAlpha(a float64) Color {
-	c.A = a
+	if a > 0 && a <= 1 {
+		c.A = a
+	} else {
+		c.A = 0
+	}
 	return c
 }
 

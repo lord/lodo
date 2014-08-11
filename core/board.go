@@ -190,14 +190,19 @@ func (brd *Board) DrawCircleOutline(x1, y1, r float64, c Color) error {
 }
 
 func (brd *Board) DrawSmallCircle(x, y float64, c Color) {
-	drawx := int(x)
-	drawy := int(y)
+	drawx := int(x + 0.5)
+	drawy := int(y + 0.5)
 	extrax := x - float64(drawx)
 	extray := y - float64(drawy)
 	brd.DrawPixel(drawx, drawy, c.WithAlpha(1-pointDistance(0, 0, extrax, extray)))
 	brd.DrawPixel(drawx+1, drawy, c.WithAlpha(1-pointDistance(1, 0, extrax, extray)))
 	brd.DrawPixel(drawx, drawy+1, c.WithAlpha(1-pointDistance(0, 1, extrax, extray)))
 	brd.DrawPixel(drawx+1, drawy+1, c.WithAlpha(1-pointDistance(1, 1, extrax, extray)))
+	brd.DrawPixel(drawx-1, drawy, c.WithAlpha(1-pointDistance(-1, 0, extrax, extray)))
+	brd.DrawPixel(drawx, drawy-1, c.WithAlpha(1-pointDistance(0, -1, extrax, extray)))
+	brd.DrawPixel(drawx-1, drawy-1, c.WithAlpha(1-pointDistance(-1, -1, extrax, extray)))
+	brd.DrawPixel(drawx-1, drawy+1, c.WithAlpha(1-pointDistance(-1, 1, extrax, extray)))
+	brd.DrawPixel(drawx+1, drawy-1, c.WithAlpha(1-pointDistance(1, -1, extrax, extray)))
 }
 
 func pointDistance(x1, y1, x2, y2 float64) float64 {
