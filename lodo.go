@@ -3,7 +3,7 @@ package main
 import (
 	"fmt"
 	"github.com/lord/lodo/core"
-	"github.com/lord/lodo/rainbow_board"
+	// "github.com/lord/lodo/rainbow_board"
 )
 
 func main() {
@@ -20,8 +20,6 @@ func main() {
 		return
 	}
 
-	rainbowBoard.Run(&board)
-
 	// strand := core.Strand{}
 	// err := strand.Connect(2000)
 	// defer strand.Free()
@@ -30,5 +28,5 @@ func main() {
 	// 	return
 	// }
 
-	// rainbow.Run(&strand)
+	RunServer(&board)
 }
