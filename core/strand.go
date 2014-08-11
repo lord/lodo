@@ -12,10 +12,14 @@ type Strand struct {
 	ledCount int
 }
 
+func (s *Strand) Length() int {
+	return s.ledCount
+}
+
 func (s *Strand) Connect(ledCount int) error {
 	s.ledCount = ledCount + 100
 	s.device = C.open_device()
-	s.buffer = make([]Color, ledCount)
+	s.buffer = make([]Color, s.ledCount)
 
 	if s.device <= 0 {
 		return errors.New("Device init failed")
@@ -32,7 +36,7 @@ func (s *Strand) Connect(ledCount int) error {
 		return errors.New("TCL init failed")
 	}
 
-	for i := 0; i < ledCount; i++ {
+	for i := 0; i < s.ledCount; i++ {
 		s.SetColor(i, MakeColor(0, 0, 0))
 	}
 	s.Save()
@@ -59,7 +63,8 @@ func (s *Strand) SetColor(ledNumber int, c Color) {
 		color = s.buffer[ledNumber].AddAlphaColor(c)
 	}
 	s.buffer[ledNumber] = color
-	C.write_color_to_buffer(s.cbuf, C.int(ledNumber), C.uint8_t(color.R), C.uint8_t(color.G), C.uint8_t(color.B))
+	// These colors are rotated so that they actually set the sensors correctly
+	C.write_color_to_buffer(s.cbuf, C.int(ledNumber), C.uint8_t(color.G), C.uint8_t(color.R), C.uint8_t(color.B))
 }
 
 func (s *Strand) Save() {

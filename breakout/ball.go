@@ -5,15 +5,16 @@ import "github.com/lord/lodo/core"
 
 type ball struct {
 	x, y, r, vx, vy float64
+	color           core.Color
 }
 
-func makeBall(x, y, r, vx, vy float64) ball {
+func makeBall(x, y, vx, vy float64, c core.Color) ball {
 	return ball{
-		x:  x,
-		y:  y,
-		r:  r,
-		vx: vx,
-		vy: vy,
+		x:     x,
+		y:     y,
+		vx:    vx,
+		vy:    vy,
+		color: c,
 	}
 }
 
@@ -35,5 +36,5 @@ func (b *ball) step() {
 }
 
 func (b *ball) draw(board *core.Board) {
-	board.DrawRect(int(b.x+0.5-b.r/2), int(b.y+0.5-b.r/2), int(b.x+0.5+b.r/2), int(b.y+0.5+b.r/2), core.MakeColor(0, 20, 0))
+	board.DrawSmallCircle(b.x, b.y, b.color)
 }

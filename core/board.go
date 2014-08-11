@@ -49,7 +49,6 @@ func (brd *Board) Free() {
 
 func (brd *Board) Save() {
 	brd.strand.Save()
-	brd.printBoardState()
 }
 
 /////////////////////////////////
