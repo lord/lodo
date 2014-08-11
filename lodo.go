@@ -2,8 +2,8 @@ package main
 
 import (
 	"fmt"
-	"github.com/lord/lodo/breakout"
 	"github.com/lord/lodo/core"
+	"github.com/lord/lodo/rainbow_board"
 )
 
 func main() {
@@ -20,7 +20,7 @@ func main() {
 		return
 	}
 
-	breakout.Run(&board)
+	rainbowBoard.Run(&board)
 
 	// strand := core.Strand{}
 	// err := strand.Connect(2000)

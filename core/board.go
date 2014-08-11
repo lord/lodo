@@ -35,16 +35,16 @@ func (brd *Board) Connect(pixelW int, pixelH int, squareW int, squareH int) erro
 	brd.squareW = squareW
 	brd.squareH = squareH
 	brd.strand = &Strand{}
-	// brd.sensors = &Sensors{}
-	// brd.sensors.initSensors(squareW, squareH)
-	// brd.poll = make(chan string)
-	// go brd.pollSensors(brd.poll)
+	brd.sensors = &Sensors{}
+	brd.sensors.initSensors(squareW, squareH)
+	brd.poll = make(chan string)
+	go brd.pollSensors(brd.poll)
 	return brd.strand.Connect(mapLedColor(pixelW * pixelH))
 }
 
 func (brd *Board) Free() {
 	brd.strand.Free()
-	// brd.sensors.stopSensors()
+	brd.sensors.stopSensors()
 }
 
 func (brd *Board) Save() {
@@ -165,7 +165,6 @@ func (brd *Board) DrawRect(x1, y1, x2, y2 int, c Color) {
 }
 
 func (brd *Board) FillSquare(x, y int, c Color) {
-	fmt.Printf("Fill Square: %d %d\n", x, y)
 	brd.DrawRect(x*7, y*7, x*7+6, y*7+6, c)
 }
 

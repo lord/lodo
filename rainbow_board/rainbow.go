@@ -1,6 +1,7 @@
 package rainbowBoard
 
 import (
+	"fmt"
 	"github.com/lord/lodo/core"
 )
 
@@ -16,6 +17,7 @@ func Run(board *core.Board) {
 		colors[i] = black
 	}
 	for {
+		board.RefreshSensors()
 		for i := len(colors) - 1; i >= 1; i-- {
 			colors[i] = colors[i-1]
 		}
@@ -61,6 +63,17 @@ func Run(board *core.Board) {
 		for y := 0; y < 42; y++ {
 			for x := 0; x < 35; x++ {
 				board.DrawPixel(x, y, colors[x+y])
+			}
+		}
+		for y := 0; y < 6; y++ {
+			for x := 0; x < 5; x++ {
+				if board.CheckPressed(x, y) {
+					board.FillSquare(x, y, core.MakeColorAlpha(31, 0, 0, 0.5))
+					fmt.Println("pressed", x, y)
+				} else if board.CheckDown(x, y) {
+					board.FillSquare(x, y, core.MakeColorAlpha(0, 0, 0, 0.8))
+					fmt.Println("filling", x, y)
+				}
 			}
 		}
 		board.Save()
