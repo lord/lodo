@@ -1,22 +1,23 @@
-package rainbow
+package rainbowBoard
 
 import (
 	"github.com/lord/lodo/core"
 )
 
-func Run(strand *core.Strand) {
+func Run(board *core.Board) {
 	r := 0
 	g := 0
 	b := 0
 	mode := 1
+	colors := make([]core.Color, 35+42)
 	const speed = 3
 	black := core.MakeColor(0, 0, 0)
-	for i := 0; i < strand.Length(); i++ {
-		strand.SetColor(i, black)
+	for i := 0; i < 35+42; i++ {
+		colors[i] = black
 	}
 	for {
-		for i := strand.Length() - 1; i >= 1; i-- {
-			strand.SetColor(i, strand.GetColor(i-1))
+		for i := len(colors) - 1; i >= 1; i-- {
+			colors[i] = colors[i-1]
 		}
 		switch mode {
 		case 0:
@@ -56,7 +57,12 @@ func Run(strand *core.Strand) {
 				mode = 0
 			}
 		}
-		strand.SetColor(0, core.MakeColor(r, g, b))
-		strand.Save()
+		colors[0] = core.MakeColor(r, g, b)
+		for y := 0; y < 42; y++ {
+			for x := 0; x < 35; x++ {
+				board.DrawPixel(x, y, colors[x+y])
+			}
+		}
+		board.Save()
 	}
 }

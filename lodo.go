@@ -3,33 +3,32 @@ package main
 import (
 	"fmt"
 	"github.com/lord/lodo/core"
-	"github.com/lord/lodo/rainbow"
+	"github.com/lord/lodo/rainbow_board"
 )
 
 func main() {
-	// board := core.Board{}
-
-	// w := 35
-	// h := 42
-	// cols := 5
-	// rows := 8
-	// err := board.Connect(w, h, cols, rows)
-	// defer board.Free()
-	// if err != nil {
-	// 	fmt.Println("Error:", err)
-	// 	return
-	// }
-
-	strand := core.Strand{}
+	board := core.Board{}
 
 	w := 35
 	h := 42
-	err := strand.Connect(w * h)
-	defer strand.Free()
+	cols := 5
+	rows := 8
+	err := board.Connect(w, h, cols, rows)
+	defer board.Free()
 	if err != nil {
 		fmt.Println("Error:", err)
 		return
 	}
 
-	rainbow.Run(&strand)
+	rainbowBoard.Run(&board)
+
+	// strand := core.Strand{}
+	// err := strand.Connect(2000)
+	// defer strand.Free()
+	// if err != nil {
+	// 	fmt.Println("Error:", err)
+	// 	return
+	// }
+
+	// rainbow.Run(&strand)
 }
