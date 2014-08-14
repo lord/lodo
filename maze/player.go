@@ -7,7 +7,7 @@ type Player struct {
 	drawX, drawY int
 }
 
-var color = core.MakeColor(0, 10, 0)
+var playerColor = core.MakeColor(0, 10, 0)
 
 func MakePlayer(x, y int) *Player {
 	return &Player{
@@ -45,9 +45,9 @@ func (player *Player) Step(game *Game) {
 }
 
 func (player *Player) Draw(board *core.Board) {
-	board.DrawPixel(player.drawX+3, player.drawY+3, color)
-	board.DrawPixel(player.drawX+4, player.drawY+3, color)
-	board.DrawPixel(player.drawX+3, player.drawY+4, color)
-	board.DrawPixel(player.drawX+3, player.drawY+2, color)
-	board.DrawPixel(player.drawX+2, player.drawY+3, color)
+	board.DrawPixel(player.drawX+3, player.drawY+3, playerColor)
+	board.DrawPixel(player.drawX+4, player.drawY+3, playerColor)
+	board.DrawPixel(player.drawX+3, player.drawY+4, playerColor)
+	board.DrawPixel(player.drawX+3, player.drawY+2, playerColor)
+	board.DrawPixel(player.drawX+2, player.drawY+3, playerColor)
 }

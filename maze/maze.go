@@ -30,7 +30,9 @@ func Run(board *core.Board) {
 		objects: []GameObject{},
 		board:   board,
 	}
-	game.objects = append(game.objects, &Player{x: 0, y: 0})
+	game.objects = append(game.objects, MakePlayer(0, 0))
+	game.objects = append(game.objects, MakeWall(2, 2, true))
+	game.objects = append(game.objects, MakeWall(2, 2, false))
 	for _ = range ticker {
 		board.RefreshSensors()
 		board.DrawAll(black)
