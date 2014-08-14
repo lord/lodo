@@ -29,7 +29,8 @@ type Board struct {
 // CONNECTION FUNCTIONS
 /////////////////////////////////
 
-func (brd *Board) Connect(pixelW int, pixelH int, squareW int, squareH int) error {
+func MakeBoard(pixelW int, pixelH int, squareW int, squareH int) (*Board, error) {
+	brd := Board{}
 	brd.pixelW = pixelW
 	brd.pixelH = pixelH
 	brd.squareW = squareW
@@ -39,7 +40,12 @@ func (brd *Board) Connect(pixelW int, pixelH int, squareW int, squareH int) erro
 	brd.sensors.initSensors(squareW, squareH)
 	brd.poll = make(chan string)
 	go brd.pollSensors(brd.poll)
-	return brd.strand.Connect(mapLedColor(pixelW * pixelH))
+	err := brd.strand.Connect(mapLedColor(pixelW * pixelH))
+	if err != nil {
+		return nil, err
+	} else {
+		return &brd, nil
+	}
 }
 
 func (brd *Board) Free() {

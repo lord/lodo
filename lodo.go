@@ -8,18 +8,16 @@ import (
 )
 
 func main() {
-	board := core.Board{}
-
 	w := 35
 	h := 42
 	cols := 5
 	rows := 6
-	err := board.Connect(w, h, cols, rows)
-	defer board.Free()
+	board, err := core.MakeBoard(w, h, cols, rows)
 	if err != nil {
 		fmt.Println("Error:", err)
 		return
 	}
+	defer board.Free()
 
 	// strand := core.Strand{}
 	// err := strand.Connect(2000)
@@ -30,5 +28,5 @@ func main() {
 	// }
 
 	//RunServer(&board)
-	test.Run(&board)
+	test.Run(board)
 }
