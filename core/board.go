@@ -266,11 +266,12 @@ func (brd *Board) CheckReleased(col int, row int) bool {
 }
 
 func (brd *Board) GetSquare(col int, row int) (int, int) {
-	x = col * 7
-	y = row * 7
+	x := col * 7
+	y := row * 7
 	if brd.includeVerticals && row >= 2 {
 		y++
 	}
+	return x, y
 }
 
 /////////////////////////////////
