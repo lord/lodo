@@ -250,18 +250,18 @@ func (brd *Board) CheckPressed(row int, col int) bool {
 	return state == 3
 }
 
-func (brd *Board) CheckDown(col, row int) bool {
-	state := brd.getSensorState(col, row)
+func (brd *Board) CheckDown(row, col int) bool {
+	state := brd.getSensorState(row, col)
 	return state == 2 || state == 3
 }
 
-func (brd *Board) CheckUp(row int, col int) bool {
-	state := brd.getSensorState(row, col)
+func (brd *Board) CheckUp(col int, row int) bool {
+	state := brd.getSensorState(col, row)
 	return state == 0 || state == 1
 }
 
-func (brd *Board) CheckReleased(row int, col int) bool {
-	state := brd.getSensorState(row, col)
+func (brd *Board) CheckReleased(col int, row int) bool {
+	state := brd.getSensorState(col, row)
 	return state == 1
 }
 
