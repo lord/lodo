@@ -19,13 +19,13 @@ func MakePlayer(x, y int) *Player {
 }
 
 func (player *Player) Step(game *Game) {
-	if game.CheckPressed(player.x+1, player.y) {
+	if game.CheckPressed(player.x+1, player.y) && game.CheckMove(player.x, player.y, Right) {
 		player.x += 1
-	} else if game.CheckPressed(player.x, player.y+1) {
+	} else if game.CheckPressed(player.x, player.y+1) && game.CheckMove(player.x, player.y, Down) {
 		player.y += 1
-	} else if game.CheckPressed(player.x-1, player.y) {
+	} else if game.CheckPressed(player.x-1, player.y) && game.CheckMove(player.x, player.y, Left) {
 		player.x -= 1
-	} else if game.CheckPressed(player.x, player.y-1) {
+	} else if game.CheckPressed(player.x, player.y-1) && game.CheckMove(player.x, player.y, Up) {
 		player.y -= 1
 	}
 
