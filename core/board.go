@@ -265,6 +265,14 @@ func (brd *Board) CheckReleased(row int, col int) bool {
 	return state == 1
 }
 
+func (brd *Board) GetSquare(col int, row int) (int, int) {
+	x = col * 7
+	y = row * 7
+	if brd.includeVerticals && row >= 2 {
+		y++
+	}
+}
+
 /////////////////////////////////
 // INTERNAL FUNCTIONS
 /////////////////////////////////
