@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"github.com/lord/lodo/breakout"
 	"github.com/lord/lodo/core"
+	"github.com/lord/lodo/maze"
 	"github.com/lord/lodo/rainbow_board"
 	"github.com/lord/lodo/server"
 	"github.com/lord/lodo/test"
@@ -13,7 +14,7 @@ import (
 var gameMode = flag.String(
 	"mode",
 	"rainbow-board",
-	"Selects the game to run. Options are 'test', 'rainbow-board', 'server' and 'breakout'.",
+	"Selects the game to run. Options are 'test', 'rainbow-board', 'server', 'maze' and 'breakout'.",
 )
 
 func main() {
@@ -35,6 +36,8 @@ func main() {
 		breakout.Run(board)
 	case "server":
 		server.Run(board)
+	case "maze":
+		maze.Run(board)
 	default:
 		fmt.Println("Game not recognized")
 	}
