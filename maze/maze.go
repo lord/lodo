@@ -24,6 +24,10 @@ func (game *Game) CheckPressed(x, y int) bool {
 	return game.board.CheckPressed(x, y)
 }
 
+func (game *Game) Draw(board *core.Board) {
+	board.DrawRectOutline(0, 0, 7*5-1, 7*6-1, wallColor)
+}
+
 func (game *Game) CheckMove(x, y int, direction Direction) bool {
 	var vertical bool
 	switch direction {
@@ -75,6 +79,7 @@ func Run(board *core.Board) {
 		for _, obj := range game.objects {
 			obj.Draw(board)
 		}
+		game.Draw(board)
 		board.Save()
 	}
 }
