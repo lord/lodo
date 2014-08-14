@@ -251,7 +251,7 @@ func (brd *Board) CheckReleased(row int, col int) bool {
 /////////////////////////////////
 
 func (brd *Board) getSensorState(col, row int) int {
-	return brd.sensors.getBoardState(col, row)
+	return brd.sensors.getBoardState(col, row+2)
 }
 
 func getPixelNum(x, y, sqW, sqH int) int {

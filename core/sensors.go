@@ -5,7 +5,7 @@ package core
 import "C"
 
 //import "errors"
-
+import "fmt"
 const sensorCount = 48
 
 type Sensors struct {
@@ -55,7 +55,7 @@ func (sensors *Sensors) readSensors() error {
 
 func (sensors *Sensors) processSensors() error {
 	var thd = C.int(20000)
-	for i := 0; i < sensors.rows*sensors.cols; i++ {
+	for i := 0; i < 40; i++ {
 		sensors.last[i] = sensors.net[i]
 		sensors.net[i] = up
 	}
@@ -85,13 +85,13 @@ func (sensors *Sensors) processSensors() error {
 		if sensors.raw[8+bank*16] > thd || sensors.raw[14+bank*16] > thd {
 			sensors.net[7+bank*8] = down
 		}
-		// fmt.Printf("|| %.5d %.5d %.5d %.5d || %.5d %.5d %.5d %.5d ||%.5d %.5d %.5d %.5d || %.5d %.5d %.5d %.5d ||  \n",
-		//             sensors.raw[0+bank*16],sensors.raw[1+bank*16],sensors.raw[2+bank*16],sensors.raw[3+bank*16],
-		//             sensors.raw[4+bank*16],sensors.raw[5+bank*16],sensors.raw[6+bank*16],sensors.raw[7+bank*16],
-		//             sensors.raw[8+bank*16],sensors.raw[9+bank*16],sensors.raw[10+bank*16],sensors.raw[11+bank*16],
-		//             sensors.raw[12+bank*16],sensors.raw[13+bank*16],sensors.raw[14+bank*16],sensors.raw[15+bank*16])
+		 fmt.Printf("|| %.5d %.5d %.5d %.5d || %.5d %.5d %.5d %.5d ||%.5d %.5d %.5d %.5d || %.5d %.5d %.5d %.5d ||  \n",
+		             sensors.raw[0+bank*16],sensors.raw[1+bank*16],sensors.raw[2+bank*16],sensors.raw[3+bank*16],
+		             sensors.raw[4+bank*16],sensors.raw[5+bank*16],sensors.raw[6+bank*16],sensors.raw[7+bank*16],
+		             sensors.raw[8+bank*16],sensors.raw[9+bank*16],sensors.raw[10+bank*16],sensors.raw[11+bank*16],
+		             sensors.raw[12+bank*16],sensors.raw[13+bank*16],sensors.raw[14+bank*16],sensors.raw[15+bank*16])
 	}
-	// fmt.Printf("\n")
+	fmt.Printf("\n")
 	for i := 0; i < sensors.rows*sensors.cols; i++ {
 		if sensors.net[i] == down && (sensors.last[i] == up || sensors.last[i] == released) {
 			sensors.net[i] = pressed

@@ -16,7 +16,7 @@
 #define P3 P8_17
 #define P4 P8_19
 
-#define POLL 3
+#define POLL 6
 #define PAUSE 1000
 #define SENSORS 80 //5*8*2
 

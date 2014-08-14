@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/lord/lodo/core"
 	// "github.com/lord/lodo/rainbow_board"
+	"github.com/lord/lodo/test"
 )
 
 func main() {
@@ -28,5 +29,6 @@ func main() {
 	// 	return
 	// }
 
-	RunServer(&board)
+	//RunServer(&board)
+	test.Run(&board)
 }
