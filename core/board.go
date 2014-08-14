@@ -76,6 +76,13 @@ func (brd *Board) DrawPixel(x, y int, c Color) {
 	brd.setColor(pixelNum, c)
 }
 
+func (brd *Board) DrawSidePixel(col, level int, c Color) {
+	pixelNum := getSidePixelNum(level, col)
+	if pixelNum != 0 {
+		brd.setColor(pixelNum, c)
+	}
+}
+
 func (brd *Board) DrawSquare(col int, row int, c Color) error {
 	for i := 0; i < 7; i++ {
 		for j := 0; j < 7; j++ {
@@ -295,6 +302,23 @@ func getPixelNum(x, y, sqW, sqH int, includeVerticals bool) int {
 	}
 
 	return boardNum*49 + pixelNum
+}
+
+func getSidePixelNum(level, col int) int {
+	base := 7 * 7 * 5 * 6
+	if col < 7*9 && level == 0 {
+		return base + col
+	}
+	if col < 7*18 && level == 0 {
+		return base + col
+	}
+	if col < 7*18 && level == 1 && col > 7*9 {
+		return base + col + 7*5 + 7*9
+	}
+	if col < 7*36 && level == 0 {
+		return base + col + 7*5 + 7*9
+	}
+	return 0 // to non-existant pixel
 }
 
 func (brd *Board) setColor(led int, color Color) {
