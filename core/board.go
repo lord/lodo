@@ -42,7 +42,7 @@ func MakeBoard() (*Board, error) {
 	brd.includeVerticals = false
 	brd.poll = make(chan string)
 	go brd.pollSensors(brd.poll)
-	err := brd.strand.Connect(mapLedColor(brd.pixelW * brd.pixelH))
+	err := brd.strand.Connect(mapLedColor(brd.pixelW*brd.pixelH) + 35*3 + 42*2)
 	if err != nil {
 		return nil, err
 	} else {
@@ -63,12 +63,16 @@ func (brd *Board) Save() {
 // DRAWING FUNCTIONS
 /////////////////////////////////
 
+func (brd *Board) SetVerticalMode(includeVerticals bool) {
+	brd.includeVerticals = includeVerticals
+}
+
 func (brd *Board) DrawPixel(x, y int, c Color) {
 	if x < 0 || x >= brd.pixelW || y < 0 || y >= brd.pixelH {
 		fmt.Println("Pixel was drawn outside the board's space, at", x, y)
 		return
 	}
-	pixelNum := getPixelNum(x, y, brd.squareW, brd.squareH)
+	pixelNum := getPixelNum(x, y, brd.squareW, brd.squareH, brd.includeVerticals)
 	brd.setColor(pixelNum, c)
 }
 
@@ -262,7 +266,14 @@ func (brd *Board) getSensorState(col, row int) int {
 	return brd.sensors.getBoardState(col, row+2)
 }
 
-func getPixelNum(x, y, sqW, sqH int) int {
+func getPixelNum(x, y, sqW, sqH int, includeVerticals bool) int {
+	if includeVerticals {
+		if y >= 15 {
+			y--
+		} else if y == 14 {
+			return 7*7*sqW*sqH + 35 + 42 + 35 + 14 + x
+		}
+	}
 	col := x / 7
 	row := y / 7
 	xPixelInSq := x % 7
@@ -321,5 +332,10 @@ func (brd *Board) processSensors() {
 }
 
 func mapLedColor(i int) int {
-	return i + i/49
+	// board sqW, sqH:
+	if i < 50*5*6 {
+		return i + i/49
+	} else {
+		return i + (5*6)*50/49
+	}
 }

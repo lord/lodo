@@ -6,6 +6,7 @@ import (
 )
 
 func Run(board *core.Board) {
+	board.SetVerticalMode(true)
 	r := 0
 	g := 0
 	b := 0
