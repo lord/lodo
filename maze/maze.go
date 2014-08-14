@@ -45,7 +45,7 @@ func (game *Game) CheckMove(x, y int, direction Direction) bool {
 
 	for _, obj := range game.objects {
 		wall, ok := obj.(*Wall)
-		if ok && wall.x == x && wall.y == y && wall.vertical == vertical {
+		if ok && wall.x == x && wall.y == y && wall.vertical == !vertical {
 			return false
 		}
 	}
@@ -68,8 +68,25 @@ func Run(board *core.Board) {
 		board:   board,
 	}
 	game.objects = append(game.objects, MakePlayer(0, 0))
-	game.objects = append(game.objects, MakeWall(2, 2, true))
+	game.objects = append(game.objects, MakeWall(0, 4, false))
+	game.objects = append(game.objects, MakeWall(0, 6, false))
+	game.objects = append(game.objects, MakeWall(1, 1, true))
+	game.objects = append(game.objects, MakeWall(1, 2, true))
+	game.objects = append(game.objects, MakeWall(1, 3, false))
+	game.objects = append(game.objects, MakeWall(1, 5, false))
+	game.objects = append(game.objects, MakeWall(2, 0, true))
+	game.objects = append(game.objects, MakeWall(2, 1, false))
 	game.objects = append(game.objects, MakeWall(2, 2, false))
+	game.objects = append(game.objects, MakeWall(2, 3, false))
+	game.objects = append(game.objects, MakeWall(2, 4, false))
+	game.objects = append(game.objects, MakeWall(2, 5, true))
+	game.objects = append(game.objects, MakeWall(3, 2, false))
+	game.objects = append(game.objects, MakeWall(3, 4, false))
+	game.objects = append(game.objects, MakeWall(3, 5, true))
+	game.objects = append(game.objects, MakeWall(4, 1, true))
+	game.objects = append(game.objects, MakeWall(4, 2, true))
+	game.objects = append(game.objects, MakeWall(4, 3, true))
+	game.objects = append(game.objects, MakeWall(4, 4, true))
 	for _ = range ticker {
 		board.RefreshSensors()
 		board.DrawAll(black)

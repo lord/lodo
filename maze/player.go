@@ -27,6 +27,8 @@ func (player *Player) Step(game *Game) {
 		player.x -= 1
 	} else if game.CheckPressed(player.x, player.y-1) && game.CheckMove(player.x, player.y, Up) {
 		player.y -= 1
+	} else if game.CheckPressed(player.x, player.y+1) {
+		game.board.DrawRect(0, 0, 2, 2, core.MakeColor(0, 20, 0))
 	}
 
 	targetX, targetY := game.board.GetSquare(player.x, player.y)
