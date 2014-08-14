@@ -305,6 +305,8 @@ func getPixelNum(x, y, sqW, sqH int, includeVerticals bool) int {
 }
 
 func getSidePixelNum(level, col int) int {
+	col += 1
+	col += (col - 1) / 5 * 2
 	base := 7 * 7 * 5 * 6
 	if col < 7*9 && level == 0 {
 		return base + col
