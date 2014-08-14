@@ -1,11 +1,11 @@
-package main
+package server
 
 import "net/http"
 import "fmt"
 import "strconv"
 import "github.com/lord/lodo/core"
 
-func RunServer(brd *core.Board) {
+func Run(brd *core.Board) {
 	http.HandleFunc("/", func(w http.ResponseWriter, req *http.Request) {
 		w.Header().Set("Access-Control-Allow-Origin", "*")
 		q := req.URL.Query()

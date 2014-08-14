@@ -6,13 +6,14 @@ import (
 	"github.com/lord/lodo/breakout"
 	"github.com/lord/lodo/core"
 	"github.com/lord/lodo/rainbow_board"
+	"github.com/lord/lodo/server"
 	"github.com/lord/lodo/test"
 )
 
 var gameMode = flag.String(
 	"mode",
 	"rainbow-board",
-	"Selects the game to run. Options are 'test', 'rainbow-board', and 'breakout'.",
+	"Selects the game to run. Options are 'test', 'rainbow-board', 'server' and 'breakout'.",
 )
 
 func main() {
@@ -32,5 +33,9 @@ func main() {
 		test.Run(board)
 	case "breakout":
 		breakout.Run(board)
+	case "server":
+		server.Run(board)
+	default:
+		fmt.Println("Game not recognized")
 	}
 }
