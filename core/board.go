@@ -245,13 +245,13 @@ func (board *Board) RefreshSensors() {
 	}
 }
 
-func (brd *Board) CheckPressed(row int, col int) bool {
-	state := brd.getSensorState(row, col)
+func (brd *Board) CheckPressed(col int, row int) bool {
+	state := brd.getSensorState(col, row)
 	return state == 3
 }
 
-func (brd *Board) CheckDown(row, col int) bool {
-	state := brd.getSensorState(row, col)
+func (brd *Board) CheckDown(col, row int) bool {
+	state := brd.getSensorState(col, row)
 	return state == 2 || state == 3
 }
 
