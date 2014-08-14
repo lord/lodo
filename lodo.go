@@ -3,16 +3,12 @@ package main
 import (
 	"fmt"
 	"github.com/lord/lodo/core"
-	// "github.com/lord/lodo/rainbow_board"
-	"github.com/lord/lodo/test"
+	"github.com/lord/lodo/rainbow_board"
+	// "github.com/lord/lodo/test"
 )
 
 func main() {
-	w := 35
-	h := 42
-	cols := 5
-	rows := 6
-	board, err := core.MakeBoard(w, h, cols, rows)
+	board, err := core.MakeBoard()
 	if err != nil {
 		fmt.Println("Error:", err)
 		return
@@ -28,5 +24,5 @@ func main() {
 	// }
 
 	//RunServer(&board)
-	test.Run(board)
+	rainbowBoard.Run(board)
 }

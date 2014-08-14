@@ -16,31 +16,33 @@ import "errors"
 import "math"
 
 type Board struct {
-	strand  *Strand
-	sensors *Sensors
-	pixelW  int
-	pixelH  int
-	squareW int
-	squareH int
-	poll    chan string
+	strand           *Strand
+	sensors          *Sensors
+	pixelW           int
+	pixelH           int
+	squareW          int
+	squareH          int
+	includeVerticals bool
+	poll             chan string
 }
 
 /////////////////////////////////
 // CONNECTION FUNCTIONS
 /////////////////////////////////
 
-func MakeBoard(pixelW int, pixelH int, squareW int, squareH int) (*Board, error) {
+func MakeBoard() (*Board, error) {
 	brd := Board{}
-	brd.pixelW = pixelW
-	brd.pixelH = pixelH
-	brd.squareW = squareW
-	brd.squareH = squareH
+	brd.pixelW = 35
+	brd.pixelH = 42
+	brd.squareW = 5
+	brd.squareH = 6
 	brd.strand = &Strand{}
 	brd.sensors = &Sensors{}
-	brd.sensors.initSensors(squareW, squareH)
+	brd.sensors.initSensors(brd.squareW, brd.squareH)
+	brd.includeVerticals = false
 	brd.poll = make(chan string)
 	go brd.pollSensors(brd.poll)
-	err := brd.strand.Connect(mapLedColor(pixelW * pixelH))
+	err := brd.strand.Connect(mapLedColor(brd.pixelW * brd.pixelH))
 	if err != nil {
 		return nil, err
 	} else {
