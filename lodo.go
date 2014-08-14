@@ -1,13 +1,23 @@
 package main
 
 import (
+	"flag"
 	"fmt"
+	"github.com/lord/lodo/breakout"
 	"github.com/lord/lodo/core"
 	"github.com/lord/lodo/rainbow_board"
-	// "github.com/lord/lodo/test"
+	"github.com/lord/lodo/test"
+)
+
+var gameMode = flag.String(
+	"mode",
+	"rainbow-board",
+	"Selects the game to run. Options are 'test', 'rainbow-board', and 'breakout'.",
 )
 
 func main() {
+	flag.Parse()
+
 	board, err := core.MakeBoard()
 	if err != nil {
 		fmt.Println("Error:", err)
@@ -15,14 +25,12 @@ func main() {
 	}
 	defer board.Free()
 
-	// strand := core.Strand{}
-	// err := strand.Connect(2000)
-	// defer strand.Free()
-	// if err != nil {
-	// 	fmt.Println("Error:", err)
-	// 	return
-	// }
-
-	//RunServer(&board)
-	rainbowBoard.Run(board)
+	switch *gameMode {
+	case "rainbow-board":
+		rainbowBoard.Run(board)
+	case "test":
+		test.Run(board)
+	case "breakout":
+		breakout.Run(board)
+	}
 }
