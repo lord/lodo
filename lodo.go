@@ -31,6 +31,7 @@ func main() {
 	case "rainbow-board":
 		rainbowBoard.Run(board)
 	case "test":
+		board.DebugSensors()
 		test.Run(board)
 	case "breakout":
 		breakout.Run(board)

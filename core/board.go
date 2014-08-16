@@ -50,6 +50,10 @@ func MakeBoard() (*Board, error) {
 	}
 }
 
+func (brd *Board) DebugSensors() {
+	brd.sensors.DebugSensors(true)
+}
+
 func (brd *Board) Free() {
 	brd.strand.Free()
 	brd.sensors.stopSensors()
