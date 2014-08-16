@@ -23,15 +23,19 @@ func (b *ball) step() {
 	b.y += b.vy
 	if b.x >= boardWidth-1 {
 		b.vx = math.Abs(b.vx) * -1
+		core.PlayWave();
 	}
 	if b.y >= boardHeight-1 {
 		b.vy = math.Abs(b.vy) * -1
+		core.PlayWave();
 	}
 	if b.x <= 0 {
 		b.vx = math.Abs(b.vx)
+		core.PlayWave();
 	}
 	if b.y <= 0 {
 		b.vy = math.Abs(b.vy)
+		core.PlayWave();
 	}
 }
 
