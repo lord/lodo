@@ -66,4 +66,3 @@ func (p *paddle) draw(board *core.Board) {
 	y := int(p.y + 0.5)
 	board.DrawRect(x, y, x+int(p.w), y+1, p.color)
 }
-

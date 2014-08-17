@@ -1,31 +1,44 @@
 package breakout
 
-import "github.com/lord/lodo/core"
-import "time"
+import (
+ "github.com/lord/lodo/core"
+ "time"
+ "fmt"
+ "math"
+  "math/rand"
+
+  )
 
 const boardWidth = 35
 const boardHeight = 42
+const winScore = 5
 
 const ( 
     begin = 1 << iota 
     play 
     miss 
     p1_win
-    p1_score
+    p1_scores
     p2_win
-    p2_score
+    p2_scores
     end
 )
 
+var r *rand.Rand
 var paddle1 paddle
 var paddle2 paddle
 var mode int
 var modeTime time.Time
 var b ball
+var p1_score int
+var p2_score int
 
 func Run(board *core.Board) {
-	mode = play
-	b = makeBall(10, 7, 0.3, 0.45, core.MakeColor(31, 31, 31))
+	setMode(begin)
+	p1_score = 0
+	p2_score = 0
+	r = rand.New(rand.NewSource(99))
+	b = makeBall(17, 7, 1.2, 0.3, 3, .1, 1.0, core.MakeColor(31, 31, 31))
 	paddleX, paddleY := board.GetSquare(2, 5)
 	paddle2X, paddle2Y := board.GetSquare(2, 0)
 	paddle1 = makePaddle(float64(paddleX), float64(paddleY)+1, 6, 5, core.MakeColor(0, 0, 31))
@@ -43,6 +56,10 @@ func Run(board *core.Board) {
 		board.RefreshSensors()
 		board.DrawAll(black)
 	    switch {
+	    case mode == begin:
+			if now.After(modeTime) { setMode(play) }
+			board.WriteText("Ready!",  0, 20, core.Orient_0,   paddle1.color)
+	    	board.WriteText("Ready!", 34, 28, core.Orient_180, paddle2.color)	    	
 	    case mode == play :
 	    	// update state if needed
 			if now.After(timeBall) {
@@ -54,46 +71,60 @@ func Run(board *core.Board) {
 				paddle2.step(board)
 				timePaddle = now.Add(stepPaddle)
 			}
-
 			// Draw the board
 			b.draw(board)
 			paddle1.draw(board)
 			paddle2.draw(board)
-		case mode == p1_score :
+		case mode == p1_scores :
+			p1_score++
+			if p1_score >= winScore {
+				setMode(p1_win)				
+			}
 			if now.After(modeTime) {
 				setMode(play)
 			}
-			board.DrawAll(paddle1.color)
-		case mode == p2_score :
+//			board.DrawAll(paddle1.color)
+			board.WriteText(fmt.Sprintf("XX"), 6, 34, core.Orient_270, paddle1.color)
+			board.WriteText(fmt.Sprintf("XX"), 6, 24, core.Orient_270, paddle2.color)
+		case mode == p2_scores :
+			p2_score++
+			if p2_score >= winScore {
+				setMode(p2_win)				
+			}
 			if now.After(modeTime) {
 				setMode(play)
 			}
-			board.DrawAll(paddle2.color)
+			board.WriteText(fmt.Sprintf("XX"), 6, 34, core.Orient_270, paddle1.color)
+			board.WriteText(fmt.Sprintf("XX"), 6, 24, core.Orient_270, paddle2.color)
 		}
 		board.Save()
+		fmt.Printf("Mode: %d\n", mode)
 	}
 }
 
 func setMode(m int) {
 	switch {
 	case m == begin:
-		modeTime = time.Now().Add(time.Duration(1000)*time.Millisecond)
+		modeTime = time.Now().Add(time.Duration(3000)*time.Millisecond)
 	case m == play:
 		modeTime = time.Now().Add(time.Duration(1000)*time.Millisecond)
+		b.hits = 0;
 		if mode == p1_score {
-			b.init(paddle1.x+paddle1.w/2, paddle1.y, 0.3, -0.45)
+			b.init(paddle1.x+paddle1.w/2, paddle1.y, -((r.Float64()*2+1.0)*math.Pi/4), .3)
+			fmt.Printf("P1 Score\n")
 		} else if mode == p2_score {
-			b.init(paddle2.x+paddle2.w/2, paddle2.y, 0.3, 0.45)
+			fmt.Printf("P2 Score\n")
+			b.init(paddle2.x+paddle2.w/2, paddle2.y,(r.Float64()*2+1.0)*math.Pi/4,  .3)
 		} else {
-			b.init(paddle2.x+paddle2.w/2, paddle2.y, 0.3, 0.45)
+			b.init(paddle2.x+paddle2.w/2, paddle2.y,  0.5*math.Pi,  .3)
 		}
 	case m == p1_win:
 		modeTime = time.Now().Add(time.Duration(1000)*time.Millisecond)
-	case m == p1_score:
+	case m == p1_scores:
 		modeTime = time.Now().Add(time.Duration(1000)*time.Millisecond)
 	case m == p2_win:
 		modeTime = time.Now().Add(time.Duration(1000)*time.Millisecond)
-    case m == p2_score:
+    case m == p2_scores:
 		modeTime = time.Now().Add(time.Duration(1000)*time.Millisecond)
 	case m == end:
 		modeTime = time.Now().Add(time.Duration(1000)*time.Millisecond)
