@@ -18,7 +18,7 @@ type Game struct {
 }
 
 func (game *Game) CheckPressed(x, y int) bool {
-	if x < 0 || x > 4 || y < 0 || y > 5 {
+	if x < 0 || x >= 5 || y < 0 || y >= 6 {
 		return false
 	}
 	return game.board.CheckPressed(x, y)
