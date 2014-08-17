@@ -18,6 +18,13 @@ func makeBall(x, y, vx, vy float64, c core.Color) ball {
 	}
 }
 
+func (b *ball) init (x, y, vx, vy float64) {
+	b.x = x
+	b.y = y
+	b.vx = vx
+	b.vy = vy
+}
+
 func (b *ball) step() {
 	b.x += b.vx
 	b.y += b.vy
@@ -25,16 +32,24 @@ func (b *ball) step() {
 		b.vx = math.Abs(b.vx) * -1
 		core.PlayWave();
 	}
-	if b.y >= boardHeight-1 {
+	if paddle1.hit(b) {
 		b.vy = math.Abs(b.vy) * -1
+		core.PlayWave();
+	}
+	if b.y >= boardHeight {
+		setMode(p2_score)
 		core.PlayWave();
 	}
 	if b.x <= 0 {
 		b.vx = math.Abs(b.vx)
 		core.PlayWave();
 	}
-	if b.y <= 0 {
+	if b.y <= 0 || paddle2.hit(b) {
 		b.vy = math.Abs(b.vy)
+		core.PlayWave();
+	}
+	if b.y <= 0 {
+		setMode(p1_score)
 		core.PlayWave();
 	}
 }

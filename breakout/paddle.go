@@ -7,6 +7,10 @@ import (
 )
 
 type paddle struct {
+	// x: coord r/l
+	// y: coor back / forth
+	// x/y at edge of paddle, top of square
+	// w: width of paddle
 	x, y, w         float64
 	row             int
 	speedMultiplier float64
@@ -50,8 +54,16 @@ func (p *paddle) step(board *core.Board) {
 	}
 }
 
+func (p *paddle) hit(b *ball) bool {
+	if (b.y >= p.y && b.y <= p.y + 1) && (b.x >= p.x && b.x <= p.x + p.w) {
+		return true
+	}	
+	return false
+}
+
 func (p *paddle) draw(board *core.Board) {
 	x := int(p.x + 0.5)
 	y := int(p.y + 0.5)
 	board.DrawRect(x, y, x+int(p.w), y+1, p.color)
 }
+
