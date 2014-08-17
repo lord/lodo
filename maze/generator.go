@@ -1,6 +1,8 @@
 package maze
 
 import "fmt"
+import "time"
+import "math/rand"
 
 type Stack struct {
 	top  *Element
@@ -60,7 +62,6 @@ func checkVisited(visited [width][height]bool, x, y int) bool {
 }
 
 func (game *Game) DeleteWall(x, y int, direction Direction) {
-	fmt.Println("deleting", x, y, direction)
 	var vertical bool
 	switch direction {
 	case Up:
@@ -86,6 +87,7 @@ func (game *Game) DeleteWall(x, y int, direction Direction) {
 }
 
 func (game *Game) GenerateMaze() {
+	rand.Seed(time.Now().UnixNano())
 	// delete all existing walls
 	game.objects = filter(game.objects, func(obj GameObject) bool {
 		_, ok := obj.(*Wall)
@@ -105,9 +107,32 @@ func (game *Game) GenerateMaze() {
 	stack.Push(point{x: currentx, y: currenty})
 	for {
 		visited[currentx][currenty] = true
+		options := []Direction{}
 		if !checkVisited(visited, currentx+1, currenty) {
-			game.DeleteWall(currentx, currenty, Right)
-			currentx += 1
+			options = append(options, Right)
+		}
+		if !checkVisited(visited, currentx, currenty+1) {
+			options = append(options, Down)
+		}
+		if !checkVisited(visited, currentx-1, currenty) {
+			options = append(options, Left)
+		}
+		if !checkVisited(visited, currentx, currenty-1) {
+			options = append(options, Up)
+		}
+		if len(options) > 0 {
+			chosenDirection := options[rand.Intn(len(options))]
+			game.DeleteWall(currentx, currenty, chosenDirection)
+			switch chosenDirection {
+			case Up:
+				currenty -= 1
+			case Down:
+				currenty += 1
+			case Left:
+				currentx -= 1
+			case Right:
+				currentx += 1
+			}
 			stack.Push(point{x: currentx, y: currenty})
 		} else if stack.Len() > 0 {
 			val := stack.Pop()
