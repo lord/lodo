@@ -50,8 +50,8 @@ func MakeBoard() (*Board, error) {
 	}
 }
 
-func (brd *Board) DebugSensors() {
-	brd.sensors.DebugSensors(true)
+func (brd *Board) DebugSensors(state bool) {
+	brd.sensors.DebugSensors(state)
 }
 
 func (brd *Board) Free() {
@@ -101,6 +101,69 @@ func (brd *Board) DrawAll(c Color) error {
 		brd.setColor(i, c)
 	}
 	return nil
+}
+
+// writes out a string
+// orientation should be orient_0, orient_90, orient_180, or orient_270
+//
+func (brd *Board) WriteText(text string, x,y, orientation int, c Color){
+	for index, runeValue := range text {
+		_ = index
+		x,y = brd.DrawRune(runeValue, x, y, orientation, c)
+    }
+}
+
+
+// draws one character and returns the next position to draw.
+func (brd *Board) DrawRune(ch rune, x,y,orientation int, c Color) (x1 int, y1 int) {
+	for i:= 0; i<len(letters); i++ {
+		if  letters[i].r == ch {
+			r := letters[i]
+			switch {
+			case orientation == Orient_0:
+				x -= 5-r.width // adjust for letters less than the full 5 pixels - most are 4 some 3 pixels wide
+				for i=0; i<7; i++ {
+					if (r.data[i] & 16) >= 1 { brd.DrawPixel(x+0, y-i, c) }
+					if (r.data[i] & 8)  >= 1 { brd.DrawPixel(x+1, y-i, c) }
+					if (r.data[i] & 4)  >= 1 { brd.DrawPixel(x+2, y-i, c) }	
+					if (r.data[i] & 2)  >= 1 { brd.DrawPixel(x+3, y-i, c) }	
+					if (r.data[i] & 1)  >= 1 { brd.DrawPixel(x+4, y-i, c) }	
+				}
+				return x+r.width+2, y // return the next position
+			case orientation == Orient_90:
+				y += 5-r.width // adjust for letters less than the full 5 pixels - most are 4 some 3 pixels wide
+				for i=0; i<7; i++ {
+					if (r.data[i] & 16) >= 1 { brd.DrawPixel(x-i, y-0, c) }
+					if (r.data[i] & 8)  >= 1 { brd.DrawPixel(x-i, y-1, c) }
+					if (r.data[i] & 4)  >= 1 { brd.DrawPixel(x-i, y-2, c) }	
+					if (r.data[i] & 2)  >= 1 { brd.DrawPixel(x-i, y-3, c) }	
+					if (r.data[i] & 1)  >= 1 { brd.DrawPixel(x-i, y-4, c) }	
+				}
+				return x, y-r.width-2 // return the next position
+			case orientation == Orient_180:
+				x += 5-r.width // adjust for letters less than the full 5 pixels - most are 4 some 3 pixels wide
+				for i=0; i<7; i++ {
+					if (r.data[i] & 16) >= 1 { brd.DrawPixel(x-0, y+i, c) }
+					if (r.data[i] & 8)  >= 1 { brd.DrawPixel(x-1, y+i, c) }
+					if (r.data[i] & 4)  >= 1 { brd.DrawPixel(x-2, y+i, c) }	
+					if (r.data[i] & 2)  >= 1 { brd.DrawPixel(x-3, y+i, c) }	
+					if (r.data[i] & 1)  >= 1 { brd.DrawPixel(x-4, y+i, c) }	
+				}
+				return x-r.width-2, y // return the next position
+			case orientation == Orient_270:
+				y -= 5-r.width // adjust for letters less than the full 5 pixels - most are 4 some 3 pixels wide
+				for i=0; i<7; i++ {
+					if (r.data[i] & 16) >= 1 { brd.DrawPixel(x+i, y+0, c) }
+					if (r.data[i] & 8)  >= 1 { brd.DrawPixel(x+i, y+1, c) }
+					if (r.data[i] & 4)  >= 1 { brd.DrawPixel(x+i, y+2, c) }	
+					if (r.data[i] & 2)  >= 1 { brd.DrawPixel(x+i, y+3, c) }	
+					if (r.data[i] & 1)  >= 1 { brd.DrawPixel(x+i, y+4, c) }	
+				}
+				return x, y+r.width+2 // return the next position
+			}
+		}
+	}
+	return x, y // letter not found
 }
 
 func ipart(x float64) float64 {
