@@ -15,6 +15,7 @@ const (
 type Game struct {
 	objects []GameObject
 	board   *core.Board
+	keys    int
 }
 
 func (d Direction) ToCoreDirection() core.Direction {
@@ -79,6 +80,7 @@ func Run(board *core.Board) {
 	game := &Game{
 		objects: []GameObject{},
 		board:   board,
+		keys:    0,
 	}
 	game.objects = append(game.objects, MakePlayer(2, 0))
 	game.objects = append(game.objects, MakeExit(2, 5))

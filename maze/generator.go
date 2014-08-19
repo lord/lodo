@@ -139,6 +139,7 @@ func (game *Game) GenerateMaze(playerX, playerY int) {
 		exitY = 5
 	}
 	game.objects = append(game.objects, MakeExit(rand.Intn(5), exitY))
+	game.objects = append(game.objects, MakeKey(rand.Intn(5), rand.Intn(4)+1))
 	stack.Push(point{x: currentx, y: currenty})
 	for {
 		visited[currentx][currenty] = true

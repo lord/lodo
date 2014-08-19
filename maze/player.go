@@ -21,6 +21,8 @@ func MakePlayer(x, y int) *Player {
 
 const speed int = 2
 
+var keyCounterColor = core.MakeColor(4, 4, 0)
+
 func (player *Player) Step(game *Game) {
 	if game.CheckPressed(player.x+1, player.y) && game.CheckMove(player.x, player.y, Right) {
 		player.x += 1
@@ -71,6 +73,9 @@ func (player *Player) Step(game *Game) {
 		if targetY > player.drawY {
 			player.drawY = targetY
 		}
+	}
+	for i := 0; i < game.keys; i++ {
+		game.board.DrawPixel(player.drawX+1+i, player.drawY+1, keyCounterColor)
 	}
 }
 
