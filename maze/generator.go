@@ -95,6 +95,18 @@ func (game *Game) CheckWallCountAtPoint(x, y int) int {
 			count++
 		}
 	}
+	if x <= 0 {
+		count += 2
+	}
+	if y <= 0 {
+		count += 2
+	}
+	if y >= 6 {
+		count += 2
+	}
+	if x >= 5 {
+		count += 2
+	}
 	return count
 }
 
