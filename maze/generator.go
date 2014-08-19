@@ -1,8 +1,8 @@
 package maze
 
-import "fmt"
 import "time"
 import "math/rand"
+import "fmt"
 
 type Stack struct {
 	top  *Element
@@ -128,8 +128,12 @@ func (game *Game) GenerateMaze(playerX, playerY int) {
 	for x := 0; x < width; x++ {
 		for y := 0; y < height; y++ {
 			visited[x][y] = false
-			game.objects = append(game.objects, MakeWall(x, y, false))
-			game.objects = append(game.objects, MakeWall(x, y, true))
+			if y != 0 {
+				game.objects = append(game.objects, MakeWall(x, y, false))
+			}
+			if x != 0 {
+				game.objects = append(game.objects, MakeWall(x, y, true))
+			}
 		}
 	}
 	var exitY int
@@ -139,7 +143,7 @@ func (game *Game) GenerateMaze(playerX, playerY int) {
 		exitY = 5
 	}
 	game.objects = append(game.objects, MakeExit(rand.Intn(5), exitY))
-	game.objects = append(game.objects, MakeKey(rand.Intn(5), rand.Intn(4)+1))
+	game.objects = append(game.objects, MakeKey(rand.Intn(5), rand.Intn(5)))
 	stack.Push(point{x: currentx, y: currenty})
 	for {
 		visited[currentx][currenty] = true
@@ -179,7 +183,7 @@ func (game *Game) GenerateMaze(playerX, playerY int) {
 			break
 		}
 	}
-	wallPunches := rand.Intn(5) + 4
+	wallPunches := rand.Intn(7) + 2
 	loopCount := 0
 	for wallPunches > 0 && loopCount < 1000 {
 		game.objects = filter(game.objects, func(obj GameObject) bool {
@@ -189,12 +193,30 @@ func (game *Game) GenerateMaze(playerX, playerY int) {
 					((wall.vertical && game.CheckWallCountAtPoint(wall.x, wall.y+1) > 1) ||
 						(!wall.vertical && game.CheckWallCountAtPoint(wall.x+1, wall.y) > 1)) {
 					wallPunches--
-					fmt.Println("punching wall at", wall.x, wall.y)
 					return false
 				}
 			}
 			return true
 		})
 		loopCount++
+	}
+
+	// add gates
+	walls := []*Wall{}
+	for _, obj := range game.objects {
+		wall, ok := obj.(*Wall)
+		if ok {
+			if game.CheckWallCountAtPoint(wall.x, wall.y) > 1 &&
+				((wall.vertical && game.CheckWallCountAtPoint(wall.x, wall.y+1) > 1) ||
+					(!wall.vertical && game.CheckWallCountAtPoint(wall.x+1, wall.y) > 1)) {
+				walls = append(walls, wall)
+			}
+		}
+	}
+	if len(walls) > 0 {
+		chosenWall := walls[rand.Intn(len(walls))]
+		game.DeleteObject(chosenWall)
+		game.objects = append(game.objects, MakeGate(chosenWall.x, chosenWall.y, chosenWall.vertical))
+		fmt.Println("Creating gate at", chosenWall.x, chosenWall.y)
 	}
 }

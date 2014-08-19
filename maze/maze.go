@@ -2,6 +2,7 @@ package maze
 
 import "github.com/lord/lodo/core"
 import "time"
+import "fmt"
 
 type Direction int
 
@@ -36,6 +37,7 @@ func (game *Game) Draw(board *core.Board) {
 func (game *Game) DeleteObject(obj GameObject) {
 	game.objects = filter(game.objects, func(o GameObject) bool {
 		if obj == o {
+			fmt.Println("deleting object", obj)
 			return false
 		}
 		return true
