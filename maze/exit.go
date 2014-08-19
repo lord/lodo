@@ -19,8 +19,8 @@ func MakeExit(x, y int) *Exit {
 	}
 }
 
-var exitColor = core.MakeColor(0, 31, 0)
-var exitAlphaSpeed = 1
+var exitColor = core.MakeColor(15, 31, 15)
+var exitAlphaSpeed = 3
 
 func (exit *Exit) Step(game *Game) {
 	if exit.alphaUp {
@@ -28,11 +28,11 @@ func (exit *Exit) Step(game *Game) {
 	} else {
 		exit.alpha -= exitAlphaSpeed
 	}
-	if exit.alpha <= 5 {
-		exit.alpha = 5
+	if exit.alpha <= 20 {
+		exit.alpha = 20
 		exit.alphaUp = true
-	} else if exit.alpha >= 75 {
-		exit.alpha = 75
+	} else if exit.alpha >= 100 {
+		exit.alpha = 100
 		exit.alphaUp = false
 	}
 	for _, obj := range game.objects {
@@ -42,6 +42,7 @@ func (exit *Exit) Step(game *Game) {
 			game.objects = append(game.objects, MakeWash(exit.y > 2, true, func() {
 				game.NewMap(player.x, player.y)
 			}))
+			game.objects = append(game.objects, MakeBurst(core.MakeColor(0, 31, 0), 3))
 		}
 	}
 }

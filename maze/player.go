@@ -32,6 +32,16 @@ func (player *Player) Step(game *Game) {
 		player.x -= 1
 	} else if game.CheckPressed(player.x, player.y-1) && game.CheckMove(player.x, player.y, Up) {
 		player.y -= 1
+	} else if game.CheckPressed(player.x, player.y) {
+		// do bomb stuff
+	} else {
+		for x := 0; x <= 4; x++ {
+			for y := 0; y <= 5; y++ {
+				if game.CheckPressed(x, y) {
+					game.objects = append(game.objects, MakeBurst(core.MakeColor(25, 0, 0), 20))
+				}
+			}
+		}
 	}
 
 	if game.CheckMove(player.x, player.y, Up) {

@@ -2,6 +2,7 @@ package core
 
 import "time"
 import "math/rand"
+import "math"
 
 type Color struct {
 	R, G, B int
@@ -11,12 +12,12 @@ type Color struct {
 var Red = MakeColor(31, 0, 0)
 var Green = MakeColor(0, 31, 0)
 var Blue = MakeColor(0, 0, 31)
-var Black = MakeColor(0,0,0)
-var White = MakeColor(31,31,31)
-var Gray = MakeColor(5,5,5)
-var Blue10 = MakeColor(0,0,10)
-var Purple = MakeColor(31,31,0)
-var Yellow = MakeColor(0,31,31)
+var Black = MakeColor(0, 0, 0)
+var White = MakeColor(31, 31, 31)
+var Gray = MakeColor(5, 5, 5)
+var Blue10 = MakeColor(0, 0, 10)
+var Purple = MakeColor(31, 31, 0)
+var Yellow = MakeColor(0, 31, 31)
 
 func MakeColor(r, g, b int) Color {
 	return Color{
@@ -37,9 +38,9 @@ func MakeColorAlpha(r, g, b int, a float64) Color {
 }
 
 func (c Color) AddAlphaColor(c2 Color) Color {
-	c.R = int(float64(c2.R-c.R)*c2.A) + c.R
-	c.G = int(float64(c2.G-c.G)*c2.A) + c.G
-	c.B = int(float64(c2.B-c.B)*c2.A) + c.B
+	c.R = int(math.Floor(float64(c2.R-c.R)*c2.A)) + c.R
+	c.G = int(math.Floor(float64(c2.G-c.G)*c2.A)) + c.G
+	c.B = int(math.Floor(float64(c2.B-c.B)*c2.A)) + c.B
 	return c
 }
 

@@ -87,6 +87,7 @@ func Run(board *core.Board) {
 	for _ = range ticker {
 		board.RefreshSensors()
 		board.DrawAll(black)
+		board.DrawAllSides(black)
 		for _, obj := range game.objects {
 			obj.Step(game)
 		}

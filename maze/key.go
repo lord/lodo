@@ -13,7 +13,7 @@ func MakeKey(x, y int) *Key {
 	}
 }
 
-var keyColor = core.MakeColor(31, 31, 0)
+var keyColor = core.MakeColor(20, 20, 0)
 
 func (key *Key) Step(game *Game) {
 	for _, obj := range game.objects {
@@ -22,6 +22,7 @@ func (key *Key) Step(game *Game) {
 			game.DeleteObject(key)
 			game.keys++
 			game.objects = append(game.objects, MakeFootprint(key.x, key.y, keyColor))
+			game.objects = append(game.objects, MakeBurst(core.MakeColor(31, 31, 0), 10))
 		}
 	}
 }

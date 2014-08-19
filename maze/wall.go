@@ -8,7 +8,7 @@ type Wall struct {
 	vertical     bool
 }
 
-var wallColor = core.MakeColor(5, 0, 0)
+var wallColor = core.MakeColor(10, 0, 0)
 
 func MakeWall(x, y int, vertical bool) *Wall {
 	return &Wall{

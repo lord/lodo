@@ -42,7 +42,7 @@ func MakeBoard() (*Board, error) {
 	brd.includeVerticals = false
 	brd.poll = make(chan string)
 	go brd.pollSensors(brd.poll)
-	err := brd.strand.Connect(mapLedColor(brd.pixelW*brd.pixelH) + 35*3 + 42*2)
+	err := brd.strand.Connect(mapLedColor(brd.pixelW*brd.pixelH) + 35*3 + 42*2 + 100)
 	if err != nil {
 		return nil, err
 	} else {
@@ -403,6 +403,14 @@ func (brd *Board) GetSquare(col int, row int) (int, int) {
 		y++
 	}
 	return x, y
+}
+
+func (brd *Board) DrawAllSides(c Color) {
+	for level := 0; level <= 1; level++ {
+		for col := 0; col < 252; col++ {
+			brd.DrawSidePixel(col, level, c)
+		}
+	}
 }
 
 /////////////////////////////////
