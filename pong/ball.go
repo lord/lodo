@@ -1,4 +1,4 @@
-package breakout
+package pong
 
 import "math"
 import "github.com/lord/lodo/core"
@@ -55,25 +55,28 @@ func (b *ball) step() {
 		//core.PlayWave();
 	}
 	if b.y >= boardHeight { // P2 Score
-		setMode(miss)
+		p2_score++
+		setMode(p2_scores)
 		//core.PlayWave();
 	}
 	if b.x <= 0 { // bounce off wall
 		b.angle = math.Pi-b.angle
 		//core.PlayWave();
 	}
-	if b.y <= 0 { // P1 Score
+	if b.angle>math.Pi && paddle2.hit(b) {
 		b.angle = -b.angle
+		english := -(b.x - (paddle2.x+paddle2.w/2))/(paddle2.w/2)*math.Pi/6
+		fmt.Printf("P2 || Angle: %4.2f english: %4.2f ", b.angle, english)
+		b.angle += english
+		fmt.Printf("New: %4.2f\n", b.angle)
+		b.hits++
 		//core.PlayWave();
 	}
-
-	for i:= 0; i<45; i++ {
-		if blocks[i].hit(b) {
-			b.angle = -b.angle
-			blocks[i].show=false
-		}
+	if b.y <= 0 { // P1 Score
+		p1_score++
+		setMode(p1_scores)
+		//core.PlayWave();
 	}
-
 	if b.angle > 2*math.Pi { 
 		b.angle -= 2*math.Pi
 	}

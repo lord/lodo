@@ -97,8 +97,10 @@ func (brd *Board) DrawSquare(col int, row int, c Color) error {
 }
 
 func (brd *Board) DrawAll(c Color) error {
-	for i := 0; i < brd.pixelW*brd.pixelH; i++ {
-		brd.setColor(i, c)
+	for x := 0; x<brd.pixelW; x++ {
+		for y := 0; y<brd.pixelH; y++ {
+			brd.DrawPixel(x, y, c)
+		}
 	}
 	return nil
 }
@@ -121,15 +123,15 @@ func (brd *Board) DrawRune(ch rune, x,y,orientation int, c Color) (x1 int, y1 in
 			r := letters[i]
 			switch {
 			case orientation == Orient_0:
-				x -= 5-r.width // adjust for letters less than the full 5 pixels - most are 4 some 3 pixels wide
+				shift := 5-r.width // adjust for letters less than the full 5 pixels - most are 4 some 3 pixels wide
 				for i=0; i<7; i++ {
-					if (r.data[i] & 16) >= 1 { brd.DrawPixel(x+0, y-i, c) }
-					if (r.data[i] & 8)  >= 1 { brd.DrawPixel(x+1, y-i, c) }
-					if (r.data[i] & 4)  >= 1 { brd.DrawPixel(x+2, y-i, c) }	
-					if (r.data[i] & 2)  >= 1 { brd.DrawPixel(x+3, y-i, c) }	
-					if (r.data[i] & 1)  >= 1 { brd.DrawPixel(x+4, y-i, c) }	
+					if (r.data[i] & 16) >= 1 { brd.DrawPixel(x+0-shift, y-i, c) }
+					if (r.data[i] & 8)  >= 1 { brd.DrawPixel(x+1-shift, y-i, c) }
+					if (r.data[i] & 4)  >= 1 { brd.DrawPixel(x+2-shift, y-i, c) }	
+					if (r.data[i] & 2)  >= 1 { brd.DrawPixel(x+3-shift, y-i, c) }	
+					if (r.data[i] & 1)  >= 1 { brd.DrawPixel(x+4-shift, y-i, c) }	
 				}
-				return x+r.width+2, y // return the next position
+				return x+r.width+1, y // return the next position
 			case orientation == Orient_90:
 				y += 5-r.width // adjust for letters less than the full 5 pixels - most are 4 some 3 pixels wide
 				for i=0; i<7; i++ {

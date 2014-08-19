@@ -12,7 +12,7 @@ func Run(board *core.Board) {
 	board.RefreshSensors()
 	blue := core.MakeColor(0, 0, 2)
 	white := core.MakeColor(10, 10, 10)
-	red := core.MakeColor(0, 31, 0)
+	red := core.MakeColor(31, 0, 0)
 	for {
 		board.RefreshSensors()
 		for x := 0; x < 5; x++ {

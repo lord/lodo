@@ -1,6 +1,6 @@
 package maze
 
-import "fmt"
+//import "fmt"
 import "time"
 import "math/rand"
 

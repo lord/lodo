@@ -9,6 +9,7 @@ import (
 	"github.com/lord/lodo/rainbow_board"
 	"github.com/lord/lodo/server"
 	"github.com/lord/lodo/test"
+	"github.com/lord/lodo/pong"
 )
 
 var gameMode = flag.String(
@@ -39,6 +40,8 @@ func main() {
 		server.Run(board)
 	case "maze":
 		maze.Run(board)
+	case "pong":
+		pong.Run(board)
 	default:
 		fmt.Println("Game not recognized")
 	}

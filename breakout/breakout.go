@@ -11,39 +11,32 @@ import (
 
 const boardWidth = 35
 const boardHeight = 42
-const winScore = 5
 
 const ( 
     begin = 1 << iota 
-    play 
-    miss 
-    p1_win
-    p1_scores
-    p2_win
-    p2_scores
-    end
+    play //2
+    miss //4
+    end //8
 )
+
+
 
 var r *rand.Rand
 var paddle1 paddle
-var paddle2 paddle
 var mode int
 var modeTime time.Time
 var b ball
-var p1_score int
-var p2_score int
+var score int
+var ballsRemaining int
 
 func Run(board *core.Board) {
 	setMode(begin)
-	p1_score = 0
-	p2_score = 0
+	board.SetVerticalMode(true)
 	r = rand.New(rand.NewSource(99))
-	b = makeBall(17, 7, 1.2, 0.3, 3, .1, 1.0, core.MakeColor(31, 31, 31))
+	b = makeBall(17, 7, 30, 2, 3, .1, 1.0, core.MakeColor(31, 31, 31))
 	paddleX, paddleY := board.GetSquare(2, 5)
-	paddle2X, paddle2Y := board.GetSquare(2, 0)
+
 	paddle1 = makePaddle(float64(paddleX), float64(paddleY)+1, 6, 5, core.MakeColor(0, 0, 31))
-	paddle2 = makePaddle(float64(paddle2X), float64(paddle2Y)+4, 6, 0, core.MakeColor(31, 0, 0))
-	black := core.MakeColor(0, 0, 0)
 
 	timeBall   := time.Now()
 	stepBall   := time.Duration(1)*time.Millisecond
@@ -54,12 +47,12 @@ func Run(board *core.Board) {
 		// get the time and sensors
 		now := time.Now()
 		board.RefreshSensors()
-		board.DrawAll(black)
+		board.DrawAll(core.Black)
 	    switch {
 	    case mode == begin:
+			board.WriteText("Ready!",   0, 21, core.Orient_0,   paddle1.color)
+			board.WriteText("3 Balls",  0, 28, core.Orient_0,   paddle1.color)
 			if now.After(modeTime) { setMode(play) }
-			board.WriteText("Ready!",  0, 20, core.Orient_0,   paddle1.color)
-	    	board.WriteText("Ready!", 34, 28, core.Orient_180, paddle2.color)	    	
 	    case mode == play :
 	    	// update state if needed
 			if now.After(timeBall) {
@@ -68,66 +61,52 @@ func Run(board *core.Board) {
 			}
 			if now.After(timePaddle) {
 				paddle1.step(board)
-				paddle2.step(board)
 				timePaddle = now.Add(stepPaddle)
 			}
 			// Draw the board
 			b.draw(board)
 			paddle1.draw(board)
-			paddle2.draw(board)
-		case mode == p1_scores :
-			p1_score++
-			if p1_score >= winScore {
-				setMode(p1_win)				
+			for i:= 0; i<45; i++ {
+				blocks[i].Draw(board)
 			}
-			if now.After(modeTime) {
-				setMode(play)
+		case mode == miss:
+			board.WriteText("Balls",7,6,core.Orient_0, paddle1.color)
+			board.WriteText(fmt.Sprintf("Left: %d", ballsRemaining), 7, 13,core.Orient_0, paddle1.color)
+			if now.After(modeTime) { setMode(play) }
+		case mode == end:
+			score := 0
+			for i:=0; i<45; i++ {
+				if blocks[i].show == false { score++ }
 			}
-//			board.DrawAll(paddle1.color)
-			board.WriteText(fmt.Sprintf("XX"), 6, 34, core.Orient_270, paddle1.color)
-			board.WriteText(fmt.Sprintf("XX"), 6, 24, core.Orient_270, paddle2.color)
-		case mode == p2_scores :
-			p2_score++
-			if p2_score >= winScore {
-				setMode(p2_win)				
-			}
-			if now.After(modeTime) {
-				setMode(play)
-			}
-			board.WriteText(fmt.Sprintf("XX"), 6, 34, core.Orient_270, paddle1.color)
-			board.WriteText(fmt.Sprintf("XX"), 6, 24, core.Orient_270, paddle2.color)
+			board.WriteText("SCORE",7,22,core.Orient_0, paddle1.color)
+			board.WriteText(fmt.Sprintf("%d",score),14,29,core.Orient_0, core.Red)
+			if now.After(modeTime) { setMode(begin) }
 		}
 		board.Save()
-		fmt.Printf("Mode: %d\n", mode)
 	}
 }
 
 func setMode(m int) {
+	fmt.Printf("Mode: %d\n", m)
 	switch {
 	case m == begin:
 		modeTime = time.Now().Add(time.Duration(3000)*time.Millisecond)
+		initBlocks()
+		score = 0
+		ballsRemaining = 3
 	case m == play:
 		modeTime = time.Now().Add(time.Duration(1000)*time.Millisecond)
 		b.hits = 0;
-		if mode == p1_score {
-			b.init(paddle1.x+paddle1.w/2, paddle1.y, -((r.Float64()*2+1.0)*math.Pi/4), .3)
-			fmt.Printf("P1 Score\n")
-		} else if mode == p2_score {
-			fmt.Printf("P2 Score\n")
-			b.init(paddle2.x+paddle2.w/2, paddle2.y,(r.Float64()*2+1.0)*math.Pi/4,  .3)
-		} else {
-			b.init(paddle2.x+paddle2.w/2, paddle2.y,  0.5*math.Pi,  .3)
+		b.init(paddle1.x+paddle1.w/2, paddle1.y, -((r.Float64()*2+1.0)*math.Pi/4), .6)
+	case m == miss:
+		modeTime = time.Now().Add(time.Duration(3000)*time.Millisecond)
+		ballsRemaining--
+		if ballsRemaining <= 0 { 
+			setMode(end) 
+			return
 		}
-	case m == p1_win:
-		modeTime = time.Now().Add(time.Duration(1000)*time.Millisecond)
-	case m == p1_scores:
-		modeTime = time.Now().Add(time.Duration(1000)*time.Millisecond)
-	case m == p2_win:
-		modeTime = time.Now().Add(time.Duration(1000)*time.Millisecond)
-    case m == p2_scores:
-		modeTime = time.Now().Add(time.Duration(1000)*time.Millisecond)
 	case m == end:
-		modeTime = time.Now().Add(time.Duration(1000)*time.Millisecond)
+		modeTime = time.Now().Add(time.Duration(3000)*time.Millisecond)
     }
    	mode = m
 }
