@@ -76,8 +76,7 @@ func Run(board *core.Board) {
 		objects: []GameObject{},
 		board:   board,
 	}
-	game.objects = append(game.objects, MakePlayer(0, 0))
-	game.GenerateMaze()
+	game.NewMap(2, 0)
 	for _ = range ticker {
 		board.RefreshSensors()
 		board.DrawAll(black)
@@ -90,4 +89,11 @@ func Run(board *core.Board) {
 		game.Draw(board)
 		board.Save()
 	}
+}
+
+func (game *Game) NewMap(playerX, playerY int) {
+	game.objects = []GameObject{}
+	game.objects = append(game.objects, MakePlayer(playerX, playerY))
+	game.GenerateMaze(playerX, playerY)
+	game.objects = append(game.objects, MakeWash(playerY > 2, false, nil))
 }

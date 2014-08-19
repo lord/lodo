@@ -98,15 +98,19 @@ func (game *Game) CheckWallCountAtPoint(x, y int) int {
 	return count
 }
 
-func (game *Game) GenerateMaze() {
+func (game *Game) GenerateMaze(playerX, playerY int) {
 	rand.Seed(time.Now().UnixNano())
 	// delete all existing walls
 	game.objects = filter(game.objects, func(obj GameObject) bool {
 		_, ok := obj.(*Wall)
 		return !ok
 	})
-	currentx := 0
-	currenty := 0
+	game.objects = filter(game.objects, func(obj GameObject) bool {
+		_, ok := obj.(*Exit)
+		return !ok
+	})
+	currentx := playerX
+	currenty := playerY
 	visited := [width][height]bool{}
 	stack := new(Stack)
 	for x := 0; x < width; x++ {
@@ -116,6 +120,13 @@ func (game *Game) GenerateMaze() {
 			game.objects = append(game.objects, MakeWall(x, y, true))
 		}
 	}
+	var exitY int
+	if playerY > 2 {
+		exitY = 0
+	} else {
+		exitY = 5
+	}
+	game.objects = append(game.objects, MakeExit(rand.Intn(5), exitY))
 	stack.Push(point{x: currentx, y: currenty})
 	for {
 		visited[currentx][currenty] = true
