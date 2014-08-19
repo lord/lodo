@@ -1,6 +1,6 @@
 package maze
 
-//import "fmt"
+import "fmt"
 import "time"
 import "math/rand"
 
@@ -86,6 +86,18 @@ func (game *Game) DeleteWall(x, y int, direction Direction) {
 	game.objects = objs
 }
 
+func (game *Game) CheckWallCountAtPoint(x, y int) int {
+	count := 0
+	for _, obj := range game.objects {
+		wall, ok := obj.(*Wall)
+		if ok && ((wall.vertical && wall.x == x && (wall.y == y || wall.y == y-1)) ||
+			(!wall.vertical && wall.y == y && (wall.x == x || wall.x == x-1))) {
+			count++
+		}
+	}
+	return count
+}
+
 func (game *Game) GenerateMaze() {
 	rand.Seed(time.Now().UnixNano())
 	// delete all existing walls
@@ -142,5 +154,23 @@ func (game *Game) GenerateMaze() {
 		} else {
 			break
 		}
+	}
+	wallPunches := rand.Intn(5) + 4
+	loopCount := 0
+	for wallPunches > 0 && loopCount < 1000 {
+		game.objects = filter(game.objects, func(obj GameObject) bool {
+			wall, ok := obj.(*Wall)
+			if ok && wallPunches > 0 && rand.Intn(len(game.objects)) == 0 {
+				if game.CheckWallCountAtPoint(wall.x, wall.y) > 1 &&
+					((wall.vertical && game.CheckWallCountAtPoint(wall.x, wall.y+1) > 1) ||
+						(!wall.vertical && game.CheckWallCountAtPoint(wall.x+1, wall.y) > 1)) {
+					wallPunches--
+					fmt.Println("punching wall at", wall.x, wall.y)
+					return false
+				}
+			}
+			return true
+		})
+		loopCount++
 	}
 }
