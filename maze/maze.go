@@ -28,6 +28,15 @@ func (game *Game) Draw(board *core.Board) {
 	board.DrawRectOutline(0, 0, 7*5-1, 7*6-1, wallColor)
 }
 
+func (game *Game) DeleteObject(obj GameObject) {
+	game.objects = filter(game.objects, func(o GameObject) bool {
+		if obj == o {
+			return false
+		}
+		return true
+	})
+}
+
 func (game *Game) CheckMove(x, y int, direction Direction) bool {
 	var vertical bool
 	switch direction {
