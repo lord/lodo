@@ -97,8 +97,8 @@ func (brd *Board) DrawSquare(col int, row int, c Color) error {
 }
 
 func (brd *Board) DrawAll(c Color) error {
-	for x := 0; x<brd.pixelW; x++ {
-		for y := 0; y<brd.pixelH; y++ {
+	for x := 0; x < brd.pixelW; x++ {
+		for y := 0; y < brd.pixelH; y++ {
 			brd.DrawPixel(x, y, c)
 		}
 	}
@@ -108,60 +108,99 @@ func (brd *Board) DrawAll(c Color) error {
 // writes out a string
 // orientation should be orient_0, orient_90, orient_180, or orient_270
 //
-func (brd *Board) WriteText(text string, x,y, orientation int, c Color){
+func (brd *Board) WriteText(text string, x, y, orientation int, c Color) {
 	for index, runeValue := range text {
 		_ = index
-		x,y = brd.DrawRune(runeValue, x, y, orientation, c)
-    }
+		x, y = brd.DrawRune(runeValue, x, y, orientation, c)
+	}
 }
 
-
 // draws one character and returns the next position to draw.
-func (brd *Board) DrawRune(ch rune, x,y,orientation int, c Color) (x1 int, y1 int) {
-	for i:= 0; i<len(letters); i++ {
-		if  letters[i].r == ch {
+func (brd *Board) DrawRune(ch rune, x, y, orientation int, c Color) (x1 int, y1 int) {
+	for i := 0; i < len(letters); i++ {
+		if letters[i].r == ch {
 			r := letters[i]
 			switch {
 			case orientation == Orient_0:
-				shift := 5-r.width // adjust for letters less than the full 5 pixels - most are 4 some 3 pixels wide
-				for i=0; i<7; i++ {
-					if (r.data[i] & 16) >= 1 { brd.DrawPixel(x+0-shift, y-i, c) }
-					if (r.data[i] & 8)  >= 1 { brd.DrawPixel(x+1-shift, y-i, c) }
-					if (r.data[i] & 4)  >= 1 { brd.DrawPixel(x+2-shift, y-i, c) }	
-					if (r.data[i] & 2)  >= 1 { brd.DrawPixel(x+3-shift, y-i, c) }	
-					if (r.data[i] & 1)  >= 1 { brd.DrawPixel(x+4-shift, y-i, c) }	
+				shift := 5 - r.width // adjust for letters less than the full 5 pixels - most are 4 some 3 pixels wide
+				for i = 0; i < 7; i++ {
+					if (r.data[i] & 16) >= 1 {
+						brd.DrawPixel(x+0-shift, y-i, c)
+					}
+					if (r.data[i] & 8) >= 1 {
+						brd.DrawPixel(x+1-shift, y-i, c)
+					}
+					if (r.data[i] & 4) >= 1 {
+						brd.DrawPixel(x+2-shift, y-i, c)
+					}
+					if (r.data[i] & 2) >= 1 {
+						brd.DrawPixel(x+3-shift, y-i, c)
+					}
+					if (r.data[i] & 1) >= 1 {
+						brd.DrawPixel(x+4-shift, y-i, c)
+					}
 				}
-				return x+r.width+1, y // return the next position
+				return x + r.width + 1, y // return the next position
 			case orientation == Orient_90:
-				y += 5-r.width // adjust for letters less than the full 5 pixels - most are 4 some 3 pixels wide
-				for i=0; i<7; i++ {
-					if (r.data[i] & 16) >= 1 { brd.DrawPixel(x-i, y-0, c) }
-					if (r.data[i] & 8)  >= 1 { brd.DrawPixel(x-i, y-1, c) }
-					if (r.data[i] & 4)  >= 1 { brd.DrawPixel(x-i, y-2, c) }	
-					if (r.data[i] & 2)  >= 1 { brd.DrawPixel(x-i, y-3, c) }	
-					if (r.data[i] & 1)  >= 1 { brd.DrawPixel(x-i, y-4, c) }	
+				y += 5 - r.width // adjust for letters less than the full 5 pixels - most are 4 some 3 pixels wide
+				for i = 0; i < 7; i++ {
+					if (r.data[i] & 16) >= 1 {
+						brd.DrawPixel(x-i, y-0, c)
+					}
+					if (r.data[i] & 8) >= 1 {
+						brd.DrawPixel(x-i, y-1, c)
+					}
+					if (r.data[i] & 4) >= 1 {
+						brd.DrawPixel(x-i, y-2, c)
+					}
+					if (r.data[i] & 2) >= 1 {
+						brd.DrawPixel(x-i, y-3, c)
+					}
+					if (r.data[i] & 1) >= 1 {
+						brd.DrawPixel(x-i, y-4, c)
+					}
 				}
-				return x, y-r.width-2 // return the next position
+				return x, y - r.width - 2 // return the next position
 			case orientation == Orient_180:
-				x += 5-r.width // adjust for letters less than the full 5 pixels - most are 4 some 3 pixels wide
-				for i=0; i<7; i++ {
-					if (r.data[i] & 16) >= 1 { brd.DrawPixel(x-0, y+i, c) }
-					if (r.data[i] & 8)  >= 1 { brd.DrawPixel(x-1, y+i, c) }
-					if (r.data[i] & 4)  >= 1 { brd.DrawPixel(x-2, y+i, c) }	
-					if (r.data[i] & 2)  >= 1 { brd.DrawPixel(x-3, y+i, c) }	
-					if (r.data[i] & 1)  >= 1 { brd.DrawPixel(x-4, y+i, c) }	
+				x += 5 - r.width // adjust for letters less than the full 5 pixels - most are 4 some 3 pixels wide
+				for i = 0; i < 7; i++ {
+					if (r.data[i] & 16) >= 1 {
+						brd.DrawPixel(x-0, y+i, c)
+					}
+					if (r.data[i] & 8) >= 1 {
+						brd.DrawPixel(x-1, y+i, c)
+					}
+					if (r.data[i] & 4) >= 1 {
+						brd.DrawPixel(x-2, y+i, c)
+					}
+					if (r.data[i] & 2) >= 1 {
+						brd.DrawPixel(x-3, y+i, c)
+					}
+					if (r.data[i] & 1) >= 1 {
+						brd.DrawPixel(x-4, y+i, c)
+					}
 				}
-				return x-r.width-2, y // return the next position
+				return x - r.width - 2, y // return the next position
 			case orientation == Orient_270:
-				y -= 5-r.width // adjust for letters less than the full 5 pixels - most are 4 some 3 pixels wide
-				for i=0; i<7; i++ {
-					if (r.data[i] & 16) >= 1 { brd.DrawPixel(x+i, y+0, c) }
-					if (r.data[i] & 8)  >= 1 { brd.DrawPixel(x+i, y+1, c) }
-					if (r.data[i] & 4)  >= 1 { brd.DrawPixel(x+i, y+2, c) }	
-					if (r.data[i] & 2)  >= 1 { brd.DrawPixel(x+i, y+3, c) }	
-					if (r.data[i] & 1)  >= 1 { brd.DrawPixel(x+i, y+4, c) }	
+				y -= 5 - r.width // adjust for letters less than the full 5 pixels - most are 4 some 3 pixels wide
+				for i = 0; i < 7; i++ {
+					if (r.data[i] & 16) >= 1 {
+						brd.DrawPixel(x+i, y+0, c)
+					}
+					if (r.data[i] & 8) >= 1 {
+						brd.DrawPixel(x+i, y+1, c)
+					}
+					if (r.data[i] & 4) >= 1 {
+						brd.DrawPixel(x+i, y+2, c)
+					}
+					if (r.data[i] & 2) >= 1 {
+						brd.DrawPixel(x+i, y+3, c)
+					}
+					if (r.data[i] & 1) >= 1 {
+						brd.DrawPixel(x+i, y+4, c)
+					}
 				}
-				return x, y+r.width+2 // return the next position
+				return x, y + r.width + 2 // return the next position
 			}
 		}
 	}
@@ -290,6 +329,29 @@ func (brd *Board) DrawSmallCircle(x, y float64, c Color) {
 	brd.DrawPixel(drawx-1, drawy-1, c.WithAlpha(1-pointDistance(-1, -1, extrax, extray)))
 	brd.DrawPixel(drawx-1, drawy+1, c.WithAlpha(1-pointDistance(-1, 1, extrax, extray)))
 	brd.DrawPixel(drawx+1, drawy-1, c.WithAlpha(1-pointDistance(1, -1, extrax, extray)))
+}
+
+func (brd *Board) DrawSmallArrow(x, y int, c Color, d Direction) {
+	drawx, drawy := brd.GetSquare(x, y)
+	brd.DrawPixel(drawx+3, drawy+3, c)
+	switch d {
+	case Up:
+		brd.DrawPixel(drawx+3, drawy+4, c)
+		brd.DrawPixel(drawx+4, drawy+4, c)
+		brd.DrawPixel(drawx+2, drawy+4, c)
+	case Down:
+		brd.DrawPixel(drawx+3, drawy+2, c)
+		brd.DrawPixel(drawx+2, drawy+2, c)
+		brd.DrawPixel(drawx+4, drawy+2, c)
+	case Left:
+		brd.DrawPixel(drawx+4, drawy+3, c)
+		brd.DrawPixel(drawx+4, drawy+4, c)
+		brd.DrawPixel(drawx+4, drawy+2, c)
+	case Right:
+		brd.DrawPixel(drawx+2, drawy+3, c)
+		brd.DrawPixel(drawx+2, drawy+4, c)
+		brd.DrawPixel(drawx+2, drawy+2, c)
+	}
 }
 
 func pointDistance(x1, y1, x2, y2 float64) float64 {

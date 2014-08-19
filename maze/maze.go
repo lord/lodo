@@ -17,6 +17,10 @@ type Game struct {
 	board   *core.Board
 }
 
+func (d Direction) ToCoreDirection() core.Direction {
+	return core.Direction(d)
+}
+
 func (game *Game) CheckPressed(x, y int) bool {
 	if x < 0 || x >= 5 || y < 0 || y >= 6 {
 		return false
@@ -76,7 +80,8 @@ func Run(board *core.Board) {
 		objects: []GameObject{},
 		board:   board,
 	}
-	game.NewMap(2, 0)
+	game.objects = append(game.objects, MakePlayer(2, 0))
+	game.objects = append(game.objects, MakeExit(2, 5))
 	for _ = range ticker {
 		board.RefreshSensors()
 		board.DrawAll(black)

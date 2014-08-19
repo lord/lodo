@@ -8,6 +8,7 @@ type Player struct {
 }
 
 var playerColor = core.MakeColor(0, 10, 0)
+var playerArrowColor = core.MakeColor(0, 2, 0)
 
 func MakePlayer(x, y int) *Player {
 	return &Player{
@@ -23,17 +24,28 @@ const speed int = 2
 func (player *Player) Step(game *Game) {
 	if game.CheckPressed(player.x+1, player.y) && game.CheckMove(player.x, player.y, Right) {
 		player.x += 1
-		game.objects = append(game.objects, MakeFootprint(player.x, player.y, Right))
 	} else if game.CheckPressed(player.x, player.y+1) && game.CheckMove(player.x, player.y, Down) {
 		player.y += 1
-		game.objects = append(game.objects, MakeFootprint(player.x, player.y, Down))
 	} else if game.CheckPressed(player.x-1, player.y) && game.CheckMove(player.x, player.y, Left) {
 		player.x -= 1
-		game.objects = append(game.objects, MakeFootprint(player.x, player.y, Left))
 	} else if game.CheckPressed(player.x, player.y-1) && game.CheckMove(player.x, player.y, Up) {
 		player.y -= 1
-		game.objects = append(game.objects, MakeFootprint(player.x, player.y, Up))
 	}
+
+	if game.CheckMove(player.x, player.y, Up) {
+		game.board.DrawSmallArrow(player.x, player.y-1, playerArrowColor, Up.ToCoreDirection())
+	}
+	if game.CheckMove(player.x, player.y, Down) {
+		game.board.DrawSmallArrow(player.x, player.y+1, playerArrowColor, Down.ToCoreDirection())
+	}
+	if game.CheckMove(player.x, player.y, Left) {
+		game.board.DrawSmallArrow(player.x-1, player.y, playerArrowColor, Left.ToCoreDirection())
+	}
+	if game.CheckMove(player.x, player.y, Right) {
+		game.board.DrawSmallArrow(player.x+1, player.y, playerArrowColor, Right.ToCoreDirection())
+	}
+
+	// game.objects = append(game.objects, MakeFootprint(player.x, player.y, Left))
 
 	targetX, targetY := game.board.GetSquare(player.x, player.y)
 	if targetX > player.drawX {
