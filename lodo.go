@@ -30,6 +30,7 @@ const Server=8
 
 func main() {
 	flag.Parse()
+	core.StartDog()
 
 	board, err := core.MakeBoard()
 	if err != nil {

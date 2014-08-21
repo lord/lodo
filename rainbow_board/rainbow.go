@@ -6,7 +6,6 @@ import (
 )
 
 func Run(board *core.Board) {
-	// var s core.Sound
 	ripplemusic := core.MakeSound(core.RippleMusic)
 	ripplemusic.Play()
 	board.SetVerticalMode(true)
@@ -14,13 +13,14 @@ func Run(board *core.Board) {
 	g := 0
 	b := 0
 	mode := 1
-	colors := make([]core.Color, 35+42)
+	colors := make([]core.Color, 35+43)
 	const speed = 3
 	black := core.MakeColor(0, 0, 0)
-	for i := 0; i < 35+42; i++ {
+	for i := 0; i < 35+43; i++ {
 		colors[i] = black
 	}
 	for {
+		core.PetDog() // Keepalive or restart
 		board.RefreshSensors()
 		for i := len(colors) - 1; i >= 1; i-- {
 			colors[i] = colors[i-1]
@@ -64,6 +64,13 @@ func Run(board *core.Board) {
 			}
 		}
 		colors[0] = core.MakeColor(r, g, b)
+		// board.DrawAllSides(colors[0])
+		board.DrawSidePixel(0,0,core.Blue)
+
+		board.DrawSidePixel(1,0,core.Red)
+		board.DrawSidePixel(1,1,core.Red)
+		board.DrawSidePixel(2,0,core.Red)
+		
 		for y := 0; y < 43; y++ {
 			for x := 0; x < 35; x++ {
 				board.DrawPixel(x, y, colors[x+y])

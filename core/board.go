@@ -33,7 +33,7 @@ type Board struct {
 func MakeBoard() (*Board, error) {
 	brd := Board{}
 	brd.pixelW = 35
-	brd.pixelH = 42
+	brd.pixelH = 43
 	brd.squareW = 5
 	brd.squareH = 6
 	brd.strand = &Strand{}
