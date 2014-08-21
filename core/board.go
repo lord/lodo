@@ -386,6 +386,15 @@ func (brd *Board) CheckDown(col, row int) bool {
 	return state == 2 || state == 3
 }
 
+func (brd *Board) CheckAnyDown() bool {
+	for x:=0; x<5; x++ {
+		for y:=0; y<6; y++ {
+			if brd.CheckDown(x,y) { return true }
+		}
+	}
+	return false
+}
+
 func (brd *Board) CheckUp(col int, row int) bool {
 	state := brd.getSensorState(col, row)
 	return state == 0 || state == 1

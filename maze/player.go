@@ -9,6 +9,7 @@ type Player struct {
 
 var playerColor = core.MakeColor(0, 10, 0)
 var playerArrowColor = core.MakeColor(0, 2, 0)
+var playerGateArrowColor = core.MakeColor(2, 2, 0)
 
 func MakePlayer(x, y int) *Player {
 	return &Player{
@@ -34,6 +35,24 @@ func (player *Player) Step(game *Game) {
 		player.y -= 1
 	} else if game.CheckPressed(player.x, player.y) {
 		// do bomb stuff
+	} else if gate := game.FindGate(player.x, player.y, Right); game.keys > 0 && game.CheckPressed(player.x+1, player.y) && gate != nil {
+		game.DeleteObject(gate)
+		game.keys--
+		player.x += 1
+	} else if gate := game.FindGate(player.x, player.y, Down); game.keys > 0 && game.CheckPressed(player.x, player.y+1) && gate != nil {
+		game.DeleteObject(gate)
+		game.keys--
+		player.y += 1
+	} else if gate := game.FindGate(player.x, player.y, Left); game.keys > 0 && game.CheckPressed(player.x-1, player.y) && gate != nil {
+		game.DeleteObject(gate)
+		game.keys--
+		player.x -= 1
+	} else if gate := game.FindGate(player.x, player.y, Up); game.keys > 0 && game.CheckPressed(player.x, player.y-1) && gate != nil {
+		game.DeleteObject(gate)
+		game.keys--
+		player.y -= 1
+	} else if game.CheckPressed(player.x, player.y) {
+		// do bomb stuff
 	} else {
 		for x := 0; x <= 4; x++ {
 			for y := 0; y <= 5; y++ {
@@ -55,6 +74,19 @@ func (player *Player) Step(game *Game) {
 	}
 	if game.CheckMove(player.x, player.y, Right) {
 		game.board.DrawSmallArrow(player.x+1, player.y, playerArrowColor, Right.ToCoreDirection())
+	}
+
+	if game.keys > 0 && game.FindGate(player.x, player.y, Up) != nil {
+		game.board.DrawSmallArrow(player.x, player.y-1, playerGateArrowColor, Up.ToCoreDirection())
+	}
+	if game.keys > 0 && game.FindGate(player.x, player.y, Down) != nil {
+		game.board.DrawSmallArrow(player.x, player.y+1, playerGateArrowColor, Down.ToCoreDirection())
+	}
+	if game.keys > 0 && game.FindGate(player.x, player.y, Left) != nil {
+		game.board.DrawSmallArrow(player.x-1, player.y, playerGateArrowColor, Left.ToCoreDirection())
+	}
+	if game.keys > 0 && game.FindGate(player.x, player.y, Right) != nil {
+		game.board.DrawSmallArrow(player.x+1, player.y, playerGateArrowColor, Right.ToCoreDirection())
 	}
 
 	// game.objects = append(game.objects, MakeFootprint(player.x, player.y, Left))

@@ -1,11 +1,14 @@
 package rainbowBoard
 
 import (
-	"fmt"
+//	"fmt"
 	"github.com/lord/lodo/core"
 )
 
 func Run(board *core.Board) {
+	// var s core.Sound
+	ripplemusic := core.MakeSound(core.RippleMusic)
+	ripplemusic.Play()
 	board.SetVerticalMode(true)
 	r := 0
 	g := 0
@@ -61,22 +64,65 @@ func Run(board *core.Board) {
 			}
 		}
 		colors[0] = core.MakeColor(r, g, b)
-		for y := 0; y < 42; y++ {
+		for y := 0; y < 43; y++ {
 			for x := 0; x < 35; x++ {
 				board.DrawPixel(x, y, colors[x+y])
 			}
+		}
+		if board.CheckAnyDown() { 
+			ripplemusic.Stop()
+			return 
 		}
 		for y := 0; y < 6; y++ {
 			for x := 0; x < 5; x++ {
 				if board.CheckPressed(x, y) {
 					board.FillSquare(x, y, core.MakeColorAlpha(31, 0, 0, 0.5))
-					fmt.Println("pressed", x, y)
+					//fmt.Println("pressed", x, y)
+					switch {
+					case y==0 && x==0:  core.PlaySound(core.A2deep)
+					case y==0 && x==1:  core.PlaySound(core.A2deep)
+					case y==0 && x==2:  core.PlaySound(core.C1deep)
+					case y==0 && x==3:  core.PlaySound(core.C2deep)
+					case y==0 && x==4:  core.PlaySound(core.D1deep)
+
+					case y==1 && x==0:  core.PlaySound(core.D2deep)
+					case y==1 && x==1:  core.PlaySound(core.E1deep)
+					case y==1 && x==2:  core.PlaySound(core.E2deep)
+					case y==1 && x==3:  core.PlaySound(core.G1deep)
+					case y==1 && x==4:  core.PlaySound(core.G2deep)
+
+					case y==2 && x==0:  core.PlaySound(core.A1ripple)
+					case y==2 && x==1:  core.PlaySound(core.A2ripple)
+					case y==2 && x==2:  core.PlaySound(core.C1ripple)
+					case y==2 && x==3:  core.PlaySound(core.C2ripple)
+					case y==2 && x==4:  core.PlaySound(core.D1ripple)
+
+					case y==3 && x==0:  core.PlaySound(core.D2ripple)
+					case y==3 && x==1:  core.PlaySound(core.E1ripple)
+					case y==3 && x==2:  core.PlaySound(core.E2ripple)
+					case y==3 && x==3:  core.PlaySound(core.G1ripple)
+					case y==3 && x==4:  core.PlaySound(core.A1ripple)
+
+					case y==4 && x==0:  core.PlaySound(core.A1ripple)
+					case y==4 && x==1:  core.PlaySound(core.A1ripple)
+					case y==4 && x==2:  core.PlaySound(core.A1ripple)
+					case y==4 && x==3:  core.PlaySound(core.A1ripple)
+					case y==4 && x==4:  core.PlaySound(core.A1ripple)
+
+					case y==5 && x==0:  core.PlaySound(core.A1deep)
+					case y==5 && x==1:  core.PlaySound(core.A1deep)
+					case y==5 && x==2:  core.PlaySound(core.A1deep)
+					case y==5 && x==3:  core.PlaySound(core.A1deep)
+					case y==5 && x==4:  core.PlaySound(core.A1deep)
+
+					}
 				} else if board.CheckDown(x, y) {
 					board.FillSquare(x, y, core.MakeColorAlpha(0, 0, 0, 0.8))
-					fmt.Println("filling", x, y)
+					//fmt.Println("filling", x, y)
 				}
 			}
 		}
 		board.Save()
 	}
 }
+

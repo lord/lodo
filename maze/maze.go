@@ -64,8 +64,36 @@ func (game *Game) CheckMove(x, y int, direction Direction) bool {
 		if ok && wall.x == x && wall.y == y && wall.vertical == !vertical {
 			return false
 		}
+		gate, ok := obj.(*Gate)
+		if ok && gate.x == x && gate.y == y && gate.vertical == !vertical {
+			return false
+		}
 	}
 	return true
+}
+
+func (game *Game) FindGate(x, y int, direction Direction) *Gate {
+	var vertical bool
+	switch direction {
+	case Up:
+		vertical = true
+	case Left:
+		vertical = false
+	case Right:
+		vertical = false
+		x++
+	case Down:
+		vertical = true
+		y++
+	}
+
+	for _, obj := range game.objects {
+		gate, ok := obj.(*Gate)
+		if ok && gate.x == x && gate.y == y && gate.vertical == !vertical {
+			return gate
+		}
+	}
+	return nil
 }
 
 type GameObject interface {

@@ -16,8 +16,8 @@ var Black = MakeColor(0, 0, 0)
 var White = MakeColor(31, 31, 31)
 var Gray = MakeColor(5, 5, 5)
 var Blue10 = MakeColor(0, 0, 10)
-var Purple = MakeColor(31, 31, 0)
-var Yellow = MakeColor(0, 31, 31)
+var Purple = MakeColor(0, 31, 31)
+var Yellow = MakeColor(31, 31, 0)
 
 func MakeColor(r, g, b int) Color {
 	return Color{

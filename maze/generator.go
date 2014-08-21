@@ -183,7 +183,7 @@ func (game *Game) GenerateMaze(playerX, playerY int) {
 			break
 		}
 	}
-	wallPunches := rand.Intn(7) + 2
+	wallPunches := rand.Intn(3) + 1
 	loopCount := 0
 	for wallPunches > 0 && loopCount < 1000 {
 		game.objects = filter(game.objects, func(obj GameObject) bool {
