@@ -115,6 +115,7 @@ func Run(board *core.Board) {
 	game.objects = append(game.objects, MakePlayer(2, 0))
 	game.objects = append(game.objects, MakeExit(2, 5))
 	for _ = range ticker {
+		core.PetDog()
 		board.RefreshSensors()
 		board.DrawAll(black)
 		board.DrawAllSides(black)

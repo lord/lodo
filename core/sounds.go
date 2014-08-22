@@ -32,7 +32,8 @@ const E2ripple = "/root/gopath/src/github.com/lord/lodo/media/ripple/ripple_E2.w
 const G1ripple = "/root/gopath/src/github.com/lord/lodo/media/ripple/ripple_G1.wav"
 const G2ripple = "/root/gopath/src/github.com/lord/lodo/media/ripple/ripple_G2.wav"
 
-const select_game = "/root/gopath/src/github.com/lord/lodo/media/voice/select_game.wav"
+const Selectgame = "/root/gopath/src/github.com/lord/lodo/media/voice/select_game.wav"
+const Bounce1 = "/root/gopath/src/github.com/lord/lodo/media/wav/bounce_1.wav"
 
 const wav = 1
 const mpg = 2

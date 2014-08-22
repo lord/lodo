@@ -42,6 +42,7 @@ func main() {
 	game := Selection
 
 	for ;; {
+		core.PetDog()
 		switch game {
 		case Selection:
 			game = Run(board)
@@ -74,7 +75,10 @@ func main() {
 
 func Run (b *core.Board) int {
 	b.SetVerticalMode(false)
-	timeOut   := time.Now().Add(time.Duration(3)*time.Second)
+	timeOut   := time.Now().Add(time.Duration(15)*time.Second)
+	chooseSound := core.MakeSound(core.Selectgame)
+	chooseSound.Play()
+
 	for ;; {
 		b.RefreshSensors()
 		b.DrawAll(core.Black)

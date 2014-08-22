@@ -73,6 +73,9 @@ func (blk *block) Draw (brd *core.Board) {
 
 func (blk *block) hit(b *ball) bool {
 	if blk.show && (b.y >= blk.y && b.y <= blk.y + 1) && (b.x >= blk.x && b.x <= blk.x + 7) {
+		s := core.MakeSound(core.Bounce1)
+		b.hits++
+		s.Play()
 		return true
 	}	
 	return false

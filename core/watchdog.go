@@ -34,7 +34,9 @@ func StopDog() {
 }
 
 func PetDog(){
+	// fmt.Printf("PetDog\n")
 	if watchdog {
+		// fmt.Printf("Write X\n")
 		var err error
 		_, err = f.WriteString("X")
 		if err != nil {

@@ -33,7 +33,7 @@ func Run(board *core.Board) {
 	setMode(begin)
 	board.SetVerticalMode(true)
 	r = rand.New(rand.NewSource(99))
-	b = makeBall(17, 7, 30, 2, 3, .1, 1.0, core.MakeColor(31, 31, 31))
+	b = makeBall(17, 7, 3, 2, 3, .1, 0.6, core.MakeColor(31, 31, 31))
 	paddleX, paddleY := board.GetSquare(2, 5)
 
 	paddle1 = makePaddle(float64(paddleX), float64(paddleY)+1, 6, 5, core.MakeColor(0, 0, 31))
@@ -43,7 +43,11 @@ func Run(board *core.Board) {
 	timePaddle := time.Now()
 	stepPaddle := time.Duration(1)*time.Millisecond
 
+	breakoutmusic := core.MakeSound(core.BreakoutMusic)
+	breakoutmusic.Play()
+
 	for {
+		core.PetDog()
 		// get the time and sensors
 		now := time.Now()
 		board.RefreshSensors()
@@ -97,7 +101,7 @@ func setMode(m int) {
 	case m == play:
 		modeTime = time.Now().Add(time.Duration(1000)*time.Millisecond)
 		b.hits = 0;
-		b.init(paddle1.x+paddle1.w/2, paddle1.y, -((r.Float64()*2+1.0)*math.Pi/4), .6)
+		b.init(paddle1.x+paddle1.w/2, paddle1.y, -((r.Float64()*2+1.0)*math.Pi/4), .2)
 	case m == miss:
 		modeTime = time.Now().Add(time.Duration(3000)*time.Millisecond)
 		ballsRemaining--

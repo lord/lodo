@@ -8,9 +8,10 @@ const squareWidth = 5
 const squareHeight = 6
 
 func Run(board *core.Board) {
-	board.DebugSensors(false)
+	board.DebugSensors(true)
 	board.RefreshSensors()
 	for {
+		core.PetDog()
 		board.RefreshSensors()
 		for x := 0; x < 5; x++ {
 			for y := 0; y < 6; y++ {
