@@ -75,7 +75,7 @@ func main() {
 
 func Run (b *core.Board) int {
 	b.SetVerticalMode(false)
-	timeOut   := time.Now().Add(time.Duration(15)*time.Second)
+	timeOut   := time.Now().Add(time.Duration(30)*time.Second)
 	chooseSound := core.MakeSound(core.Selectgame)
 	chooseSound.Play()
 
@@ -96,10 +96,14 @@ func Run (b *core.Board) int {
 		b.DrawRectOutline(0,28,6,34,core.Purple)
 		if b.CheckDown(0, 4) { return Maze }
 
+		b.WriteText("RIPL",8,41,core.Orient_0, core.Purple)
+		b.DrawRectOutline(0,28,6,34,core.Yellow)
+		if b.CheckDown(0, 5) { return Ripple }
+
 		if b.CheckDown(1, 1) { return Test }
 
 		if b.CheckAnyDown() {
-			timeOut = time.Now().Add(time.Duration(3)*time.Second)
+			timeOut = time.Now().Add(time.Duration(30)*time.Second)
 		}
 
 		if time.Now().After(timeOut) {

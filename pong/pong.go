@@ -51,6 +51,7 @@ func Run(board *core.Board) {
 	stepPaddle := time.Duration(1)*time.Millisecond
 
 	for {
+		core.PetDog()
 		// get the time and sensors
 		now := time.Now()
 		board.RefreshSensors()
@@ -127,19 +128,19 @@ func setMode(m int) {
 			b.init(paddle2.x+paddle2.w/2, paddle2.y,(r.Float64()*2+1.0)*math.Pi/4,  .3)
 		}
 	case m == p1_win:
-		modeTime = time.Now().Add(time.Duration(5000)*time.Millisecond)
+		modeTime = time.Now().Add(time.Duration(8000)*time.Millisecond)
 		p1_score = 0
 		p2_score = 0
 		b.hits = 0
 	case m == p1_scores:
-		modeTime = time.Now().Add(time.Duration(1000)*time.Millisecond)
+		modeTime = time.Now().Add(time.Duration(3000)*time.Millisecond)
 	case m == p2_win:
-		modeTime = time.Now().Add(time.Duration(5000)*time.Millisecond)
+		modeTime = time.Now().Add(time.Duration(8000)*time.Millisecond)
 		p1_score = 0
 		p2_score = 0		
 		b.hits = 0
     case m == p2_scores:
-		modeTime = time.Now().Add(time.Duration(1000)*time.Millisecond)
+		modeTime = time.Now().Add(time.Duration(3000)*time.Millisecond)
 	case m == end:
 		modeTime = time.Now().Add(time.Duration(1000)*time.Millisecond)
     }

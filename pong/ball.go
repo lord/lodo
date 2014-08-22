@@ -43,7 +43,8 @@ func (b *ball) step() {
 	b.y += b.speed*math.Sin(b.angle)
 	if b.x >= boardWidth-1 {
 		b.angle = math.Pi-b.angle
-		//core.PlayWave();
+		s := core.MakeSound(core.Pong);
+		s.Play()
 	}
 	if b.angle<math.Pi && paddle1.hit(b) {
 		b.angle = -b.angle
@@ -52,16 +53,19 @@ func (b *ball) step() {
 		b.angle += english
 		fmt.Printf("New: %4.2f\n", b.angle)
 		b.hits++
-		//core.PlayWave();
+		s := core.MakeSound(core.Bounce5);
+		s.Play()
 	}
 	if b.y >= boardHeight { // P2 Score
 		p2_score++
 		setMode(p2_scores)
-		//core.PlayWave();
+		s := core.MakeSound(core.Glass);
+		s.Play()
 	}
 	if b.x <= 0 { // bounce off wall
 		b.angle = math.Pi-b.angle
-		//core.PlayWave();
+		s := core.MakeSound(core.Pong);
+		s.Play()
 	}
 	if b.angle>math.Pi && paddle2.hit(b) {
 		b.angle = -b.angle
@@ -70,12 +74,14 @@ func (b *ball) step() {
 		b.angle += english
 		fmt.Printf("New: %4.2f\n", b.angle)
 		b.hits++
-		//core.PlayWave();
+		s := core.MakeSound(core.Bounce5);
+		s.Play()
 	}
 	if b.y <= 0 { // P1 Score
 		p1_score++
 		setMode(p1_scores)
-		//core.PlayWave();
+		s := core.MakeSound(core.Glass);
+		s.Play()
 	}
 	if b.angle > 2*math.Pi { 
 		b.angle -= 2*math.Pi
