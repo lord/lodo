@@ -1,7 +1,7 @@
 package pong
 
 import (
- "github.com/lord/lodo/core"
+ "github.com/james/lodo/core"
  "time"
  "fmt"
  "math"
@@ -34,6 +34,7 @@ var p1_score int
 var p2_score int
 
 func Run(board *core.Board) {
+	board.SetVerticalMode(true)
 	setMode(begin)
 	p1_score = 0
 	p2_score = 0
@@ -59,8 +60,9 @@ func Run(board *core.Board) {
 	    switch {
 	    case mode == begin:
 			if now.After(modeTime) { setMode(play) }
-			board.WriteText("Ready!",  0, 20, core.Orient_0,   paddle1.color)
-	    	board.WriteText("Ready!", 34, 28, core.Orient_180, paddle2.color)	    	
+			board.WriteText("Ready!",  3, 20, core.Orient_0,   paddle1.color)
+	    	board.WriteText("Ready!", 31, 28, core.Orient_180, paddle2.color)	    	
+	    	drawborder(board)
 	    case mode == play :
 	    	// update state if needed
 			if now.After(timeBall) {
@@ -76,6 +78,7 @@ func Run(board *core.Board) {
 			b.draw(board)
 			paddle1.draw(board)
 			paddle2.draw(board)
+			drawborder(board)
 		case mode == p1_scores:
 			if p1_score >= winScore {
 				setMode(p1_win)				
@@ -98,12 +101,12 @@ func Run(board *core.Board) {
 		case mode == p2_win:
 			board.DrawAll(paddle2.color)
 			if now.After(modeTime) {
-				setMode(begin)
+				return 
 			}
 		case mode == p1_win:
 			board.DrawAll(paddle1.color)
 			if now.After(modeTime) {
-				setMode(begin)
+				return 
 			}
 		}
 		board.Save()
@@ -145,4 +148,22 @@ func setMode(m int) {
 		modeTime = time.Now().Add(time.Duration(1000)*time.Millisecond)
     }
    	mode = m
+}
+
+func drawborder(b *core.Board){
+	c := core.MakeColor(0,1,0)
+	for col:=0; col<5; col++ {
+		b.DrawPixel(0+col*7,6,c)
+		b.DrawPixel(6+col*7,6,c)		
+		b.DrawPixel(0+col*7,36,c)
+		b.DrawPixel(6+col*7,36,c)		
+	}
+	for row:=0; row<35; row++ {
+		b.DrawPixel(row,42,c)				
+		b.DrawPixel(row,0,c)
+}
+	for col:=0; col<=43; col++ {
+		b.DrawPixel(0,col,c)					
+		b.DrawPixel(34,col,c)					
+	}
 }

@@ -1,7 +1,7 @@
 package breakout
 
 import (
- "github.com/lord/lodo/core"
+ "github.com/james/lodo/core"
  "time"
  "fmt"
  "math"
@@ -17,6 +17,7 @@ const (
     play //2
     miss //4
     end //8
+    levelup //16
 )
 
 
@@ -28,7 +29,7 @@ var modeTime time.Time
 var b ball
 var score int
 var ballsRemaining int
-
+var breakoutmusic core.Sound
 func Run(board *core.Board) {
 	setMode(begin)
 	board.SetVerticalMode(true)
@@ -42,8 +43,9 @@ func Run(board *core.Board) {
 	stepBall   := time.Duration(1)*time.Millisecond
 	timePaddle := time.Now()
 	stepPaddle := time.Duration(1)*time.Millisecond
+	blocksTotal = 0
 
-	breakoutmusic := core.MakeSound(core.BreakoutMusic)
+	breakoutmusic = core.MakeSound(core.BreakoutMusic)
 	breakoutmusic.Play()
 
 	for {
@@ -54,8 +56,8 @@ func Run(board *core.Board) {
 		board.DrawAll(core.Black)
 	    switch {
 	    case mode == begin:
-			board.WriteText("Ready!",   0, 21, core.Orient_0,   paddle1.color)
-			board.WriteText("3 Balls",  0, 28, core.Orient_0,   paddle1.color)
+			board.WriteText("Ready!",   3, 21, core.Orient_0,   paddle1.color)
+			board.WriteText("3 Balls",  3, 28, core.Orient_0,   paddle1.color)
 			if now.After(modeTime) { setMode(play) }
 	    case mode == play :
 	    	// update state if needed
@@ -73,19 +75,38 @@ func Run(board *core.Board) {
 			for i:= 0; i<45; i++ {
 				blocks[i].Draw(board)
 			}
+			if blocksOnScreen <= 0 { 
+				setMode(levelup)
+			}
 		case mode == miss:
 			board.WriteText("Balls",7,6,core.Orient_0, paddle1.color)
 			board.WriteText(fmt.Sprintf("Left: %d", ballsRemaining), 7, 13,core.Orient_0, paddle1.color)
+			if now.After(timePaddle) {
+				paddle1.step(board)
+				timePaddle = now.Add(stepPaddle)
+			}
+			if now.After(modeTime) { setMode(play) }
+		case mode == levelup:
+			for i:= 0; i<45; i++ {
+				blocks[i].Draw(board)
+			}
+			board.WriteText("Level Up", 1, 28, core.Orient_0,   core.Green)
+			if now.After(timePaddle) {
+				paddle1.step(board)
+				timePaddle = now.Add(stepPaddle)
+			}			
 			if now.After(modeTime) { setMode(play) }
 		case mode == end:
-			score := 0
-			for i:=0; i<45; i++ {
-				if blocks[i].show == false { score++ }
+			board.WriteText("SCORE",7,13,core.Orient_0, paddle1.color)
+			board.WriteText(fmt.Sprintf("%d",blocksTotal),14,29,core.Orient_0, core.Red)
+			if now.After(timePaddle) {
+				paddle1.step(board)
+				timePaddle = now.Add(stepPaddle)
 			}
-			board.WriteText("SCORE",7,22,core.Orient_0, paddle1.color)
-			board.WriteText(fmt.Sprintf("%d",score),14,29,core.Orient_0, core.Red)
-			if now.After(modeTime) { setMode(begin) }
+			if now.After(modeTime) { 
+				return  }
 		}
+		drawgrid(board)
 		board.Save()
 	}
 }
@@ -96,11 +117,11 @@ func setMode(m int) {
 	case m == begin:
 		modeTime = time.Now().Add(time.Duration(3000)*time.Millisecond)
 		initBlocks()
-		score = 0
+		blocksTotal = 0
 		ballsRemaining = 3
 	case m == play:
 		modeTime = time.Now().Add(time.Duration(1000)*time.Millisecond)
-		b.hits = 0;
+		b.hits = 0
 		b.init(paddle1.x+paddle1.w/2, paddle1.y, -((r.Float64()*2+1.0)*math.Pi/4), .2)
 	case m == miss:
 		modeTime = time.Now().Add(time.Duration(3000)*time.Millisecond)
@@ -109,8 +130,31 @@ func setMode(m int) {
 			setMode(end) 
 			return
 		}
-	case m == end:
+	case m == levelup:
 		modeTime = time.Now().Add(time.Duration(3000)*time.Millisecond)
+		b.init(paddle1.x+paddle1.w/2, paddle1.y, -((r.Float64()*2+1.0)*math.Pi/4), .4)
+		b.hits = 0
+		initBlocks()
+	case m == end:
+		breakoutmusic.Stop()
+		gameover := core.MakeSound(core.GameOver)
+		gameover.Play()
+		modeTime = time.Now().Add(time.Duration(5000)*time.Millisecond)
     }
    	mode = m
+}
+
+func drawgrid(b *core.Board) {
+	c := core.MakeColor(0,1,0)
+	for col:=0; col<5; col++ {
+		b.DrawPixel(0+col*7,36,c)
+		b.DrawPixel(6+col*7,36,c)		
+	}
+	for row:=0; row<35; row++ {
+		b.DrawPixel(row,42,c)				
+	}
+	for col:=37; col<=43; col++ {
+		b.DrawPixel(0,col,c)					
+		b.DrawPixel(34,col,c)					
+	}
 }

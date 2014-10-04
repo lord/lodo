@@ -292,7 +292,11 @@ func (brd *Board) DrawRect(x1, y1, x2, y2 int, c Color) {
 }
 
 func (brd *Board) FillSquare(x, y int, c Color) {
-	brd.DrawRect(x*7, y*7, x*7+6, y*7+6, c)
+	if brd.includeVerticals && y>1 { 
+		brd.DrawRect(x*7, y*7+1, x*7+6, y*7+6+1, c)
+	} else {
+		brd.DrawRect(x*7, y*7, x*7+6, y*7+6, c)
+	} 
 }
 
 func (brd *Board) DrawRectOutline(x1, y1, x2, y2 int, c Color) {
@@ -427,7 +431,7 @@ func (brd *Board) DrawAllSides(c Color) {
 /////////////////////////////////
 
 func (brd *Board) getSensorState(col, row int) int {
-	return brd.sensors.getBoardState(col, row+2)
+	return brd.sensors.getBoardState(col, row) // hack to accomodate the shift
 }
 
 func getPixelNum(x, y, sqW, sqH int, includeVerticals bool) int {
@@ -522,3 +526,4 @@ func mapLedColor(i int) int {
 		return i + (5*6)*50/49
 	}
 }
+

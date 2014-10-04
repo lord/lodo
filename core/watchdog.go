@@ -7,7 +7,9 @@ var f *os.File
 var watchdog = true
 // starts the watchdog service - will restart if not written to every 60 seconds
 func StartDog() {
-	watchdog = true
+	return
+	watchdog = false
+	return
 	var err error
 	f, err = os.Create("/dev/watchdog")
 	if err != nil {
@@ -27,6 +29,7 @@ func StartDog() {
 }
 
 func StopDog() {
+	return
 	if watchdog {
 		watchdog = false
 		f.Close()
@@ -34,6 +37,7 @@ func StopDog() {
 }
 
 func PetDog(){
+	return
 	// fmt.Printf("PetDog\n")
 	if watchdog {
 		// fmt.Printf("Write X\n")

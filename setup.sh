@@ -19,4 +19,6 @@ echo 1 > /sys/class/gpio/gpio22/value
 
 # enable PRU Unit on the BB
 echo BB-BONE-PRU-01 > /sys/devices/bone_capemgr.9/slots
-
+sleep 4
+//screen -S test -d -m /root/gopath/bin/lodo
+#su - root /root/gopath/bin/lodo

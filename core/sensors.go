@@ -100,6 +100,16 @@ func (sensors *Sensors) processSensors() error {
 				sensors.raw[12+bank*16], sensors.raw[13+bank*16], sensors.raw[14+bank*16], sensors.raw[15+bank*16])
 		}
 	}
+// hack for bad bank and rewiring sensors
+	// sensors.net[0+2*8] = sensors.net[7+bank*8]  // no map
+	// sensors.net[1+2*8] = sensors.net[7+bank*8]  // no map
+	// sensors.net[2+2*8] = sensors.net[1+0*8]
+	// sensors.net[3+2*8] = sensors.net[1+0*8]
+	// sensors.net[4+2*8] = sensors.net[7+bank*8]
+	// sensors.net[5+2*8] = sensors.net[7+bank*8]
+	// sensors.net[6+2*8] = sensors.net[7+bank*8]
+	// sensors.net[7+2*8] = sensors.net[7+bank*8]
+
 	if sensors.debug {
 		fmt.Printf("\n")
 	}

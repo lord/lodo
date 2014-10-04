@@ -4,13 +4,14 @@ import (
 	"flag"
 	"fmt"
 	"time"
-	"github.com/lord/lodo/breakout"
-	"github.com/lord/lodo/core"
-	"github.com/lord/lodo/maze"
-	"github.com/lord/lodo/rainbow_board"
-	"github.com/lord/lodo/server"
-	"github.com/lord/lodo/test"
-	"github.com/lord/lodo/pong"
+	"github.com/james/lodo/breakout"
+	"github.com/james/lodo/core"
+	//"github.com/james/lodo/maze"
+	"github.com/james/lodo/rainbow_board"
+	//"github.com/james/lodo/server"
+	"github.com/james/lodo/test"
+	"github.com/james/lodo/pong"
+	"github.com/james/lodo/ripple"
 )
 
 var gameMode = flag.String(
@@ -42,7 +43,6 @@ func main() {
 	game := Selection
 
 	for ;; {
-		core.PetDog()
 		switch game {
 		case Selection:
 			game = Run(board)
@@ -57,13 +57,16 @@ func main() {
 			breakout.Run(board)
 			game = Selection
 		case Server:
-			server.Run(board)
+//			server.Run(board)
 			game = Selection
 		case Maze:
-			maze.Run(board)
+//			maze.Run(board)
 			game = Selection
 		case Pong:
 			pong.Run(board)
+			game = Selection
+		case Ripple:
+			ripple.Run(board)
 			game = Selection
 		default:
 			fmt.Println("Game not recognized")
@@ -80,27 +83,28 @@ func Run (b *core.Board) int {
 	chooseSound.Play()
 
 	for ;; {
+		core.PetDog()
 		b.RefreshSensors()
 		b.DrawAll(core.Black)
 		b.WriteText("Choose",4,13,core.Orient_0, core.White)
 
-		b.WriteText("PONG",8,20,core.Orient_0, core.Blue)
+		b.WriteText("Pong",8,20,core.Orient_0, core.Blue)
 		b.DrawRectOutline(0,14,6,20,core.Blue)
 		if b.CheckDown(0, 2) { return Pong }
 
-		b.WriteText("BKOUT",8,27,core.Orient_0, core.Green)
+		b.WriteText("Bkout",8,27,core.Orient_0, core.Green)
 		b.DrawRectOutline(0,21,6,27,core.Green)
 		if b.CheckDown(0, 3) { return Breakout }
 
-		b.WriteText("MAZE",8,34,core.Orient_0, core.Purple)
-		b.DrawRectOutline(0,28,6,34,core.Purple)
-		if b.CheckDown(0, 4) { return Maze }
+		// b.WriteText("MAZE",8,34,core.Orient_0, core.Purple)
+		// b.DrawRectOutline(0,28,6,34,core.Purple)
+		// if b.CheckDown(0, 4) { return Maze }
 
-		b.WriteText("RIPL",8,41,core.Orient_0, core.Purple)
+		b.WriteText("Oasis",8,34,core.Orient_0, core.Yellow)
 		b.DrawRectOutline(0,28,6,34,core.Yellow)
-		if b.CheckDown(0, 5) { return Ripple }
+		if b.CheckDown(0, 4) { return Ripple }
 
-		if b.CheckDown(1, 1) { return Test }
+		if b.CheckDown(3, 1) { return Test }
 
 		if b.CheckAnyDown() {
 			timeOut = time.Now().Add(time.Duration(30)*time.Second)

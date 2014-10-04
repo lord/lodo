@@ -2,12 +2,12 @@ package rainbowBoard
 
 import (
 //	"fmt"
-	"github.com/lord/lodo/core"
+	"github.com/james/lodo/core"
 )
 
 func Run(board *core.Board) {
-	ripplemusic := core.MakeSound(core.RippleMusic)
-	ripplemusic.Play()
+	sitarmusic := core.MakeSound(core.SitarMusic)
+	sitarmusic.Play()
 	board.SetVerticalMode(true)
 	r := 0
 	g := 0
@@ -69,6 +69,23 @@ func Run(board *core.Board) {
 				board.DrawPixel(x, y, colors[x+y])
 			}
 		}
+		// for c := 0; c<22*5; c++ {
+		// 	// bottom
+		// 	switch {
+		// 	case c < 25:
+		// 		board.DrawSidePixel(c,0,colors[c+42])
+		// 	case c<55:
+		// 		board.DrawSidePixel(c,0,colors[42-(c-25)+35])
+		// 		board.DrawSidePixel(c,1,colors[42-(c-25)+35])
+		// 	case c<80:
+		// 		board.DrawSidePixel(c,0,colors[80-c])
+		// 		board.DrawSidePixel(c,1,colors[80-c])
+		// 	case c<110:
+		// 		board.DrawSidePixel(c,0,colors[(c-80)])
+		// 		board.DrawSidePixel(c,1,colors[(c-80)])
+		// 	}
+		// }
+
 		for c := 0; c<22*5; c++ {
 			// bottom
 			switch {
@@ -87,7 +104,7 @@ func Run(board *core.Board) {
 		}
 
 		if board.CheckAnyDown() { 
-			ripplemusic.Stop()
+			sitarmusic.Stop()
 			return 
 		}
 		board.Save()

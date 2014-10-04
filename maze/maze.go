@@ -1,6 +1,6 @@
 package maze
 
-import "github.com/lord/lodo/core"
+import "github.com/james/lodo/core"
 import "time"
 import "fmt"
 

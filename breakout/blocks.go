@@ -1,6 +1,6 @@
 package breakout
 
-import "github.com/lord/lodo/core"
+import "github.com/james/lodo/core"
 
 
 type block struct {
@@ -14,10 +14,13 @@ type block struct {
 	show			bool
 }
 const blockCount = 45
+var blocksOnScreen = blockCount
+var blocksTotal   = blockCount
 var blocks []block
 
 func initBlocks() {
 	blocks = make([]block, blockCount)
+	blocksOnScreen = blockCount
 	for br := 0; br<9; br++ { //block row
 		for c := 0; c<5; c++ {
 			blocks[br*5+c].show = true
@@ -75,6 +78,8 @@ func (blk *block) hit(b *ball) bool {
 	if blk.show && (b.y >= blk.y && b.y <= blk.y + 1) && (b.x >= blk.x && b.x <= blk.x + 7) {
 		s := core.MakeSound(core.Bounce1)
 		b.hits++
+		blocksOnScreen--
+		blocksTotal++
 		s.Play()
 		return true
 	}	
