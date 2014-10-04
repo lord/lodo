@@ -4,14 +4,14 @@ import (
 	"flag"
 	"fmt"
 	"time"
-	"github.com/james/lodo/breakout"
-	"github.com/james/lodo/core"
-	//"github.com/james/lodo/maze"
-	"github.com/james/lodo/rainbow_board"
-	//"github.com/james/lodo/server"
-	"github.com/james/lodo/test"
-	"github.com/james/lodo/pong"
-	"github.com/james/lodo/ripple"
+	"github.com/lord/lodo/breakout"
+	"github.com/lord/lodo/core"
+	//"github.com/lord/lodo/maze"
+	"github.com/lord/lodo/rainbow_board"
+	//"github.com/lord/lodo/server"
+	"github.com/lord/lodo/test"
+	"github.com/lord/lodo/pong"
+	"github.com/lord/lodo/ripple"
 )
 
 var gameMode = flag.String(

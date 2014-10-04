@@ -2,7 +2,7 @@ package pong
 
 import (
 	_ "fmt"
-	"github.com/james/lodo/core"
+	"github.com/lord/lodo/core"
 	"math"
 )
 

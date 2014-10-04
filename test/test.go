@@ -1,6 +1,6 @@
 package test
 
-import "github.com/james/lodo/core"
+import "github.com/lord/lodo/core"
 import "time"
 
 const boardWidth = 35

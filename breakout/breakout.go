@@ -1,7 +1,7 @@
 package breakout
 
 import (
- "github.com/james/lodo/core"
+ "github.com/lord/lodo/core"
  "time"
  "fmt"
  "math"

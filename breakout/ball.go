@@ -1,7 +1,7 @@
 package breakout
 
 import "math"
-import "github.com/james/lodo/core"
+import "github.com/lord/lodo/core"
 import "fmt"
 
 // angle = 0 is aligned with the X axis.

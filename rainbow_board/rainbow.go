@@ -2,7 +2,7 @@ package rainbowBoard
 
 import (
 //	"fmt"
-	"github.com/james/lodo/core"
+	"github.com/lord/lodo/core"
 )
 
 func Run(board *core.Board) {

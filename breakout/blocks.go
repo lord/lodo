@@ -1,6 +1,6 @@
 package breakout
 
-import "github.com/james/lodo/core"
+import "github.com/lord/lodo/core"
 
 
 type block struct {
