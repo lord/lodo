@@ -1,12 +1,16 @@
 package breakout
 
 import (
- "github.com/lord/lodo/core"
- "time"
- "fmt"
- "math"
-  "math/rand"
-
+	"github.com/lord/lodo/core"
+	"time"
+	"fmt"
+	"math"
+	"math/rand"
+//	"bufio"
+//	"io"
+	"io/ioutil"
+//	"os"
+	"strconv"
   )
 
 const boardWidth = 35
@@ -18,6 +22,8 @@ const (
     miss //4
     end //8
     levelup //16
+    highscore // 32
+    newhighscore // 32
 )
 
 
@@ -30,6 +36,7 @@ var b ball
 var score int
 var ballsRemaining int
 var breakoutmusic core.Sound
+var highscorenum int
 func Run(board *core.Board) {
 	setMode(begin)
 	board.SetVerticalMode(true)
@@ -59,7 +66,7 @@ func Run(board *core.Board) {
 			board.WriteText("Ready!",   3, 21, core.Orient_0,   paddle1.color)
 			board.WriteText("3 Balls",  3, 28, core.Orient_0,   paddle1.color)
 			if now.After(modeTime) { setMode(play) }
-	    case mode == play :
+	    case mode == play:
 	    	// update state if needed
 			if now.After(timeBall) {
 				b.step()
@@ -97,28 +104,44 @@ func Run(board *core.Board) {
 			}			
 			if now.After(modeTime) { setMode(play) }
 		case mode == end:
-			board.WriteText("SCORE",7,13,core.Orient_0, paddle1.color)
-			board.WriteText(fmt.Sprintf("%d",blocksTotal),14,29,core.Orient_0, core.Red)
+			board.WriteText("SCORE",7,21,core.Orient_0, paddle1.color)
+			board.WriteText(fmt.Sprintf("%d",blocksTotal),14,28,core.Orient_0, core.Red)
 			if now.After(timePaddle) {
 				paddle1.step(board)
 				timePaddle = now.Add(stepPaddle)
 			}
 			if now.After(modeTime) { 
-				return  }
+				highscorenum = getHighScore()
+				if blocksTotal > highscore {
+					setHighScore(blocksTotal)
+					setMode(newhighscore)
+				} else {
+					setMode(highscore)
+				}
+			}
+		case mode == highscore: 
+			board.WriteText("HIGH",7,21,core.Orient_0, paddle1.color)
+			board.WriteText(fmt.Sprintf("%d",highscorenum),14,28,core.Orient_0, core.White)
+			if now.After(modeTime) { return }
+		case mode == newhighscore:
+			board.WriteText("HIGH",7,21,core.Orient_0, paddle1.color)
+			board.WriteText(fmt.Sprintf("%d",blocksTotal),14,28,core.Orient_0, core.White)
+			if now.After(modeTime) { return }
 		}
 		drawgrid(board)
 		board.Save()
 	}
 }
 
+// Set the mode - this provides for initialization of a mode
 func setMode(m int) {
-	fmt.Printf("Mode: %d\n", m)
+//	fmt.Printf("Mode: %d\n", m)
 	switch {
 	case m == begin:
 		modeTime = time.Now().Add(time.Duration(3000)*time.Millisecond)
 		initBlocks()
 		blocksTotal = 0
-		ballsRemaining = 3
+		ballsRemaining = 1
 	case m == play:
 		modeTime = time.Now().Add(time.Duration(1000)*time.Millisecond)
 		b.hits = 0
@@ -140,6 +163,12 @@ func setMode(m int) {
 		gameover := core.MakeSound(core.GameOver)
 		gameover.Play()
 		modeTime = time.Now().Add(time.Duration(5000)*time.Millisecond)
+	case m == highscore:
+		modeTime = time.Now().Add(time.Duration(5000)*time.Millisecond)
+	case m == newhighscore:
+		modeTime = time.Now().Add(time.Duration(5000)*time.Millisecond)
+		highscoreSound := core.MakeSound(core.Pewpewpew)
+		highscoreSound.Play()
     }
    	mode = m
 }
@@ -157,4 +186,18 @@ func drawgrid(b *core.Board) {
 		b.DrawPixel(0,col,c)					
 		b.DrawPixel(34,col,c)					
 	}
+}
+
+func getHighScore() int {
+	dat, _ := ioutil.ReadFile("/root/breakoutscore")
+//	fmt.Print(string(dat))
+	hs, err := strconv.Atoi(string(dat))
+	if (err != nil) { hs = 999 }
+//	fmt.Printf(":::%i",hs)
+	return hs
+}
+
+func setHighScore(score int) {
+	scoreText := []byte(fmt.Sprintf("%d",score))
+    _ = ioutil.WriteFile("/root/breakoutscore", scoreText, 0644)
 }

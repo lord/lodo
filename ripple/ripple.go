@@ -20,6 +20,8 @@ var water = []core.Color {
 	core.Color{0,0,3,1},
 	core.Color{2,2,2,1}}
 
+var currentSound core.Sound
+
 func Run(board *core.Board) {
  	rand.Seed(42)
  	colors := make([]core.Color, 35*43)
@@ -133,7 +135,7 @@ func play(x,y int) {
 	}
 }
 
-func startSound(s string){
+func startSound(s string) {
 	tone.Stop()
 	tone = core.MakeSound(s)
 	tone.Play()

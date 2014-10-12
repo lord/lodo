@@ -54,6 +54,7 @@ func (c Color) WithAlpha(a float64) Color {
 }
 
 func (c Color) Scale(amt float32) Color {
+	if amt < 0 { amt = 0 }
 	return MakeColor(
 		int(amt*float32(c.R)),
 		int(amt*float32(c.G)),

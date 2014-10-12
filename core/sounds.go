@@ -95,9 +95,10 @@ func MakeSound(soundfile string) Sound {
 	return s
 }
 
-func PlaySound(soundfile string) {
+func PlaySound(soundfile string) Sound{
 	s := MakeSound(soundfile)
 	s.Play()
+	return s
 }
 
 // plays sound, waits for completion

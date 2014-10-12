@@ -10,10 +10,11 @@ The board sensors map to the same.
 */
 
 package core
-
+import "sort"
 import "fmt"
 import "errors"
 import "math"
+// import "time"
 
 type Board struct {
 	strand           *Strand
@@ -24,7 +25,9 @@ type Board struct {
 	squareH          int
 	includeVerticals bool
 	poll             chan string
+	boardItems		 []Drawer
 }
+
 
 /////////////////////////////////
 // CONNECTION FUNCTIONS
@@ -41,6 +44,7 @@ func MakeBoard() (*Board, error) {
 	brd.sensors.initSensors(brd.squareW, brd.squareH)
 	brd.includeVerticals = false
 	brd.poll = make(chan string)
+	brd.boardItems = make([]Drawer,0,50)
 	go brd.pollSensors(brd.poll)
 	err := brd.strand.Connect(mapLedColor(brd.pixelW*brd.pixelH) + 35*3 + 42*2 + 100)
 	if err != nil {
@@ -60,7 +64,30 @@ func (brd *Board) Free() {
 }
 
 func (brd *Board) Save() {
+	brd.drawItems()
 	brd.strand.Save()
+}
+
+func (brd *Board) drawItems(){
+	for _, item := range brd.boardItems {
+		if item != nil {
+			if item.remove() {
+				item = nil
+			} else {
+				item.draw(brd)
+			}
+		}
+	}
+}
+
+func (brd *Board) ClearItems(){
+	brd.boardItems = make([]Drawer,0,50)
+}
+
+func (brd *Board) AddItem(d Drawer){
+	brd.boardItems = append(brd.boardItems, d)
+	sort.Sort(DrawerByZ(brd.boardItems))
+	fmt.Println(len(brd.boardItems))
 }
 
 /////////////////////////////////
@@ -72,13 +99,97 @@ func (brd *Board) SetVerticalMode(includeVerticals bool) {
 }
 
 func (brd *Board) DrawPixel(x, y int, c Color) {
-	if x < 0 || x >= brd.pixelW || y < 0 || y >= brd.pixelH {
-		// fmt.Println("Pixel was drawn outside the board's space, at", x, y)
-		return
-	}
-	pixelNum := getPixelNum(x, y, brd.squareW, brd.squareH, brd.includeVerticals)
-	brd.setColor(pixelNum, c)
+	brd.DrawPixel3(x,y,0,c)
+	return
+	// if x < 0 || x >= brd.pixelW || y < 0 || y >= brd.pixelH {
+	// 	// fmt.Println("Pixel was drawn outside the board's space, at", x, y)
+	// 	return
+	// }
+	// pixelNum := getPixelNum(x, y, brd.squareW, brd.squareH, brd.includeVerticals)
+	// brd.setColor(pixelNum, c)
 }
+
+// alternative mapping.
+// z = 0 is top, with the intermediate vertical if includeverticals=true
+// z = 1 is top sides.  x and y is the same as the edge pixels on the top
+// z = 2 is bottom sides
+// if includeVerticals is true, then the front intermedate must be set with z=0
+
+func (brd *Board) DrawPixel3(x, y, z int, c Color) {
+//	for i:=0; i< 49*30; i++ { brd.setColor(i, Yellow) }
+
+	base := 6*5*49
+	side := 7
+	switch z {
+	case 0:  // top surface
+		if brd.includeVerticals {
+			if y==14 {
+				brd.setColor(base+18*side+x, c)
+				return
+			}
+			if y>14 { y-- }
+		}
+		sCol := x/7
+		sRow := y/7
+		squares := sRow*5;
+		if sRow%2==0 {
+			squares += sCol
+		} else {
+			squares += 4-sCol
+		}
+		sy := y%7
+		sx := x%7
+		if sy%2==1{
+			brd.setColor(49*squares+sy*7+sx,c)
+		} else {
+			brd.setColor(49*squares+(sy+1)*7-sx-1,c)
+		}
+	case 1: // middle level
+		switch {
+		case x>=0 && x <=34 && y==0:
+			brd.setColor(base+30*side-x-1, c)
+
+		case x==0 && y>0 && y<13:
+			brd.setColor(base+30*side+y, c)
+
+		case !brd.includeVerticals && x>=0 && x <=34 && y==13:
+			brd.setColor(base+18*side+x, c)
+
+		case x==34 && y>0 && y<13:
+			brd.setColor(base+25*side-y-1, c)
+
+		}
+	case 2: // bottom level
+		switch {
+		//left side, bottom level
+		case x==0 && y>0 && y<13:
+			brd.setColor(base+16*side+y, c)
+		case !brd.includeVerticals && x==0 && y>13 && y<42:
+			brd.setColor(base+30*side+y, c)
+		case brd.includeVerticals && x==0 && y>14 && y<43:
+			brd.setColor(base+30*side+y-1, c)
+		
+		case y==0 && x>0 && x<34:
+		 	brd.setColor(base+16*side-x-1, c)
+		
+		case x==34 && y>0 && y<13:
+			brd.setColor(base+11*side-y-1, c)
+		case !brd.includeVerticals && x==34 && y>13 && y<42:
+			brd.setColor(base+11*side-y-1, c)
+		case brd.includeVerticals && x==34 && y>14 && y<43:
+			brd.setColor(base+11*side-y, c)
+
+		case !brd.includeVerticals && y==41 && x>0 && x<34:
+			brd.setColor(base + x, c)
+			return
+		case brd.includeVerticals && y==42 && x>0 && x<34:
+			brd.setColor(base + x, c)
+			return
+		}
+	}
+}
+
+
 
 func (brd *Board) DrawSidePixel(col, level int, c Color) {
 	pixelNum := getSidePixelNum(level, col)
@@ -97,6 +208,7 @@ func (brd *Board) DrawSquare(col int, row int, c Color) error {
 }
 
 func (brd *Board) DrawAll(c Color) error {
+	brd.DrawAllSides(c)
 	for x := 0; x < brd.pixelW; x++ {
 		for y := 0; y < brd.pixelH; y++ {
 			brd.DrawPixel(x, y, c)
@@ -419,9 +531,22 @@ func (brd *Board) GetSquare(col int, row int) (int, int) {
 }
 
 func (brd *Board) DrawAllSides(c Color) {
-	for level := 0; level <= 1; level++ {
-		for col := 0; col < 252; col++ {
-			brd.DrawSidePixel(col, level, c)
+	for x:=0; x<35; x++ {
+		brd.DrawPixel3(x,0,2,c)
+		brd.DrawPixel3(x,0,1,c)
+		if !brd.includeVerticals {
+			brd.DrawPixel3(x,13,1,c)
+			brd.DrawPixel3(x,41,2,c)
+		} else {
+			brd.DrawPixel3(x,42,2,c)
+		}
+	}
+	for y:=0; y<43; y++{
+		brd.DrawPixel3(0, y,2,c)
+		brd.DrawPixel3(34,y,2,c)
+		if y<14 {
+			brd.DrawPixel3(0,y,1,c)
+			brd.DrawPixel3(34,y,1,c)
 		}
 	}
 }
@@ -518,6 +643,8 @@ func (brd *Board) processSensors() {
 	brd.sensors.processSensors()
 }
 
+
+// removes the extra light at the end.
 func mapLedColor(i int) int {
 	// board sqW, sqH:
 	if i < 50*5*6 {
@@ -526,4 +653,3 @@ func mapLedColor(i int) int {
 		return i + (5*6)*50/49
 	}
 }
-
