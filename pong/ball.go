@@ -90,6 +90,10 @@ func (b *ball) step() {
 		b.angle += 2*math.Pi
 	}
 
+	// avoid extreme angles
+	if b.angle <2*math.Pi && b.angle > 1.75*math.Pi { b.angle = 1.75*math.Pi }
+	if b.angle <1.25*math.Pi && b.angle > 1.00*math.Pi { b.angle = 1.25*math.Pi }
+
 	// Adjust Rate
 	if b.hits >= b.speedupHits {
 		b.speed += b.speedupRate

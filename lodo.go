@@ -82,22 +82,43 @@ func Run (b *core.Board) int {
 	chooseSound := core.MakeSound(core.Selectgame)
 	chooseSound.Play()
 
-	b.AddItem(core.NewDrawRect(0,14,7,7,1,core.Blue,1000))
-	b.AddItem(core.NewDrawRect(0,21,7,7,1,core.Green,700))
-	b.AddItem(core.NewDrawRect(0,28,7,7,1,core.Yellow,1300))
+	pong := core.NewPallette(0,0,4)
+	bkout := core.NewPallette(0,34,4)
+	oasis := core.NewPallette(0,34,4)
+	// p.AddItem(core.Drawer(core.NewDrawRect(0,14,7,7,1,core.Blue,1000)))
+	// p.AddItem(core.Drawer(core.NewDrawRect(0,21,7,7,1,core.Green,700)))
+	// p.AddItem(core.Drawer(core.NewDrawRect(0,28,7,7,1,core.Yellow,1300)))
+	// p.AddItem(core.Drawer(core.NewStext(4,13,2,core.White, core.Orient_0, "Choose")))
+	// p.AddItem(core.Drawer(core.NewStext(8,20,3,core.Blue, core.Orient_0, "Pong")))
+	// p.AddItem(core.Drawer(core.NewStext(8,27,3,core.Green, core.Orient_0, "Bkout")))
+	// p.AddItem(core.Drawer(core.NewStext(8,34,3,core.Yellow, core.Orient_0, "Oasis")))
+	b.AddItem(core.NewSArrow(10,38,270,14,core.Blue,0))
+	b.AddItem(core.Drawer(core.NewDrawRect(14,35,7,7,1,core.Green,1400)))
+	b.AddItem(core.NewSArrow(24,38,90,14,core.Blue,0))
+	b.AddItem(p)
+	// b.AddItem(core.NewDrawRect(0,14,7,7,1,core.Blue,1000))
+	// b.AddItem(core.NewDrawRect(0,21,7,7,1,core.Green,700))
+	// b.AddItem(core.NewDrawRect(0,28,7,7,1,core.Yellow,1300))
 
+	
 
 	for ;; {
 		core.PetDog()
+
+		// s:= time.Now().Nanosecond()/1000/1000   // returns 1-1000
+		// s1:=int(float32(s)/float32(1000)*float32(68))
+		// //fmt.Printf("%v, %v\n",s, s1)
+		// p.Shift(s1-34,0)
+
+
 		b.RefreshSensors()
 		b.DrawAll(core.Black)
-		b.WriteText("Choose",4,13,core.Orient_0, core.White)
-		b.WriteText("Pong",8,20,core.Orient_0, core.Blue)
+
+
 
 //		b.DrawRectOutline(0,14,6,20,core.Blue)
 		if b.CheckDown(0, 2) { return Pong }
 
-		b.WriteText("Bkout",8,27,core.Orient_0, core.Green)
 //		b.DrawRectOutline(0,21,6,27,core.Green)  
 		if b.CheckDown(0, 3) { return Breakout }
 
@@ -105,11 +126,10 @@ func Run (b *core.Board) int {
 		// b.DrawRectOutline(0,28,6,34,core.Purple)
 		// if b.CheckDown(0, 4) { return Maze }
 
-		b.WriteText("Oasis",8,34,core.Orient_0, core.Yellow)
 //		b.DrawRectOutline(0,28,6,34,core.Yellow)
 		if b.CheckDown(0, 4) { 
 			b.AddItem(core.NewDrawRectFlash(0,28,7,7,10,core.White, 3000))
-			delay(b, 3000)
+			delay(b, 6000)
 			return Ripple 
 		}
 
@@ -123,14 +143,6 @@ func Run (b *core.Board) int {
 			return Rainbow
 		}
 		b.SetVerticalMode(false)
-	b.DrawPixel3(1,1,0,core.Green)
-	b.DrawPixel3(7,7,0,core.Red)
-	// b.DrawPixel3(1+7,1,0,core.Red)
-	// b.DrawPixel3(2+7,2,0,core.Red)
-	// b.DrawPixel3(3+7,3,0,core.Red)
-	// b.DrawPixel3(4+7,4,0,core.Red)
-	// b.DrawPixel3(5+7,5,0,core.Red)
-	// b.DrawPixel3(6+7,6,0,core.Red)
 	b.Save()
 	}
 }

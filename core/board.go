@@ -26,6 +26,9 @@ type Board struct {
 	includeVerticals bool
 	poll             chan string
 	boardItems		 []Drawer
+	shiftx			 int
+	shifty			 int
+	scalePix		 float32
 }
 
 
@@ -39,6 +42,8 @@ func MakeBoard() (*Board, error) {
 	brd.pixelH = 43
 	brd.squareW = 5
 	brd.squareH = 6
+	brd.shiftx  = 0
+	brd.shifty  = 0
 	brd.strand = &Strand{}
 	brd.sensors = &Sensors{}
 	brd.sensors.initSensors(brd.squareW, brd.squareH)
@@ -115,8 +120,24 @@ func (brd *Board) DrawPixel(x, y int, c Color) {
 // z = 2 is bottom sides
 // if includeVerticals is true, then the front intermedate must be set with z=0
 
+func (brd *Board) Shift(x,y int) {
+	brd.shiftx = x
+	brd.shifty = y
+}
+
+func (brd *Board) Unshift(){
+	brd.shiftx = 0
+	brd.shifty = 0
+}
+
 func (brd *Board) DrawPixel3(x, y, z int, c Color) {
 //	for i:=0; i< 49*30; i++ { brd.setColor(i, Yellow) }
+	x += brd.shiftx
+	y += brd.shifty
+	if x<0 || x>34 || y<0 || y>42 || (y==42 && !brd.includeVerticals) { return }
+	// if brd.scalePix!=1.0 {
+	// 	c = c.Scale(brd.scalePix)
+	// }
 
 	base := 6*5*49
 	side := 7
@@ -473,14 +494,6 @@ func (brd *Board) DrawSmallArrow(x, y int, c Color, d Direction) {
 func pointDistance(x1, y1, x2, y2 float64) float64 {
 	return math.Sqrt((x2-x1)*(x2-x1) + (y2-y1)*(y2-y1))
 }
-
-// func (brd *Board) DrawSprite(x1, y1, r int, c Color) error {
-// 	return errors.New("Not implemented")
-// }
-
-// func (brd *Board) DrawText(x1, y1, r int, c Color) error {
-// 	return errors.New("Not implemented")
-// }
 
 func (board *Board) RefreshSensors() {
 	select {
