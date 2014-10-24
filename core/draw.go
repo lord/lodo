@@ -6,6 +6,13 @@ import "time"
 import "fmt"
 import "sort"
 
+// constants
+const Anime_departright = 1
+const Anime_departleft  = 2
+const Anime_arriveright = 3
+const Anime_arriveleft  = 4
+
+
 //
 // Graphics Section
 //
@@ -20,6 +27,14 @@ type DrawerByZ []Drawer
 func (a DrawerByZ) Len() int           { return len(a) }
 func (a DrawerByZ) Swap(i, j int)      { a[i], a[j] = a[j], a[i] }
 func (a DrawerByZ) Less(i, j int) bool { return a[i].zOrder() < a[j].zOrder() }
+
+//
+// ShapeController
+//
+type ShapeController interface {
+	canDelete() bool
+	color() Color
+}
 
 // Rect is a one pixel wide item with the upper corner at x y
 type   Rect struct {
@@ -91,6 +106,29 @@ func (r RectFlash) remove() bool {
 	return r.canDelete
 }
 
+type CRect struct {
+	x,y,width,depth,z int
+	sc ShapeController
+}
+
+func NewCRect(x,y,width,depth,z int, sc ShapeController) CRect {
+	return CRect{x,y,width,depth,z,sc}
+}
+
+func (r CRect) zOrder() int {
+	return r.z
+}
+
+func (r CRect) remove() bool {
+	//if Time.Now()
+	return r.sc.canDelete()
+}
+
+func (r CRect) draw(brd *Board) {
+	c := r.sc.color()
+	brd.DrawRect(r.x, r.y, r.x+r.width-1, r.y+r.depth-1, c)
+
+}
 
 /////////////////////
 // sText
@@ -128,15 +166,23 @@ type coords struct {
 	x, y int
 } 
 
+type anime struct {
+	animeStart time.Time
+	animeMode int
+	animeDurMS int
+	visible bool
+}
+
 type Pallette struct {
 	coord *coords
 	z int
 	canDelete bool
 	palletteItems []Drawer
+	a *anime
 }
 
 func NewPallette(x, y, z int) Pallette {
-	return Pallette{&coords{x,y},z,false,make([]Drawer,0,0)}
+	return Pallette{&coords{x,y},z,false, make([]Drawer,0,0), &anime{time.Now(), 0,0,true}}
 }
 
 func (p Pallette) draw(brd *Board) {
@@ -150,6 +196,44 @@ func (p Pallette) zOrder() int {
 }
 
 func (p *Pallette) drawItems(brd *Board){
+	// fmt.Printf("X: %v isVis: %v\n", p.coord.x, p.a.visible)
+	if p.a.animeMode != 0 {
+		ms := int(time.Since(p.a.animeStart).Nanoseconds()/1000/1000)
+		p.a.visible = true 
+		switch p.a.animeMode {
+			case Anime_departright:
+				if ms>p.a.animeDurMS { 
+					p.a.visible = false 
+					p.a.animeMode = 0
+				} else {
+					p.coord.x = int(35.0*float32(ms)/float32(p.a.animeDurMS))
+				}
+			case Anime_departleft:
+				if ms>p.a.animeDurMS { 
+					p.a.visible = false 
+					p.a.animeMode = 0
+				} else {
+					p.coord.x = -int(35.0*float32(ms)/float32(p.a.animeDurMS))
+				}
+			case Anime_arriveright:
+				if ms>p.a.animeDurMS { 
+					p.a.animeMode = 0
+					p.coord.x = 0
+				} else {
+					p.coord.x = 35-int(35.0*float32(ms)/float32(p.a.animeDurMS))
+				}
+			case Anime_arriveleft:
+				if ms>p.a.animeDurMS { 
+					p.a.animeMode = 0
+					p.coord.x = 0
+				} else {
+					p.coord.x = -35+int(35.0*float32(ms)/float32(p.a.animeDurMS))
+				}
+			default:
+		}
+	}
+
+	if !p.a.visible { return }
 	for _, item := range p.palletteItems {
 		if item != nil {
 			if item.remove() {
@@ -163,6 +247,10 @@ func (p *Pallette) drawItems(brd *Board){
 
 func (p *Pallette) ClearItems(){
 	p.palletteItems = make([]Drawer,0,50)
+}
+
+func (p *Pallette) Visible(vis bool) {
+	p.a.visible = vis
 }
 
 func (p *Pallette) AddItem(d Drawer){
@@ -185,30 +273,29 @@ func (p Pallette) Shift(x,y int) {
 	p.coord.y = y
 }
 
+func (p Pallette) BeginAnime(animeType, durMS int) {
+	p.a.animeStart = time.Now()
+	p.a.animeDurMS = durMS
+	p.a.animeMode = animeType
+	p.a.visible = true
+//	oOn := time.Now().Add(time.Duration(delayMS)*time.Millisecond)
+}
+
 /////////////////////
 // Flashing Arrow
 ///////////////////
 
 type SArrow struct {
 	x,y,orient,z int
-	c Color
-	start time.Time
-	periodMS int 
-	canDelete bool
+	sc ShapeController	
 }
 
-func NewSArrow(x,y,orient,z int, c Color, flashDurationMS int) SArrow {
-	return SArrow{x,y,orient,z,c, time.Now(), flashDurationMS, false}
+func NewSArrow(x,y,orient,z int, sc ShapeController) SArrow {
+	return SArrow{x,y,orient,z,sc}
 }
 
 func (a SArrow) draw(brd *Board) {
-	scale := float32(1.0)
-	if a.periodMS != 0 {
-		ms := int(time.Since(a.start)/time.Millisecond) % a.periodMS
-		scale = 1.0 - float32(ms) * 2 / float32(a.periodMS)
-		if scale < 0 { scale = -scale }
-	}
-	c := a.c.Scale(scale)
+	c := a.sc.color()	
 	switch a.orient {
 		case 0: 
 		brd.DrawRect(a.x-3,a.y,a.x-3,a.y,c)
@@ -224,7 +311,7 @@ func (a SArrow) draw(brd *Board) {
 		brd.DrawRect(a.x-3,a.y-1,a.x+2,a.y+1,c)
 		brd.DrawRect(a.x+3,a.y,  a.x+3,a.y,  c)
 		brd.DrawRect(a.x,  a.y+2,a.x+1,a.y+2,c)
-		brd.DrawRect(a.x  ,a.y+3,a.x  ,a.y+3,  c)
+		brd.DrawRect(a.x  ,a.y+3,a.x  ,a.y+3,c)
 		return
 		case 180: 
 		brd.DrawRect(a.x-3,a.y,a.x-3,a.y,c)
@@ -233,7 +320,6 @@ func (a SArrow) draw(brd *Board) {
 		brd.DrawRect(a.x,a.y+3,a.x,a.y+3,c)
 		brd.DrawRect(a.x+2,a.y,a.x+2,a.y+1,c)
 		brd.DrawRect(a.x+3,a.y,a.x+3,a.y,c)
-
 		return
 		case 270: 
 		brd.DrawRect(a.x  ,a.y-3,a.x,  a.y-3,c)
@@ -241,18 +327,83 @@ func (a SArrow) draw(brd *Board) {
 		brd.DrawRect(a.x-2,a.y-1,a.x+3,a.y+1,c)
 		brd.DrawRect(a.x-3,a.y,  a.x-3,a.y,  c)
 		brd.DrawRect(a.x-1,a.y+2,a.x  ,a.y+2,c)
-		brd.DrawRect(a.x  ,a.y+3,a.x  ,a.y+3,  c)
+		brd.DrawRect(a.x  ,a.y+3,a.x  ,a.y+3,c)
 		return
 	}
 }
-
-
 
 func (a SArrow) zOrder() int {
 	return a.z
 }
 
 func (a SArrow) remove() bool {
-	//if Time.Now()
-	return a.canDelete
+	return a.sc.canDelete()
+}
+
+///////////////////////////////////
+//
+// Controllers
+
+type SolidControl struct {
+	c Color
+}
+
+func NewSolidControl(c Color) SolidControl {
+	return SolidControl{c}
+}
+
+func (f SolidControl) canDelete() bool{
+	return false
+}
+
+func (f SolidControl) color() Color{
+	return f.c
+}
+
+type SolidShortControl struct {
+	start time.Time
+	durMS int
+	c Color
+}
+
+func NewSolidShortControl(dur int, c Color) SolidShortControl {
+	return SolidShortControl{time.Now(), dur, c}
+}
+
+func (f SolidShortControl) canDelete() bool{
+	msSince := int(time.Since(f.start).Nanoseconds()/1000/1000)
+	return msSince > f.durMS
+}
+
+func (f SolidShortControl) color() Color{
+	return f.c
+}
+
+type FlashControl struct {
+	start time.Time 
+	fullDurationMS int
+	decayDurationMS int
+	c Color
+}
+
+func NewFlashControl(full, decay int, c Color) FlashControl {
+	return FlashControl{ time.Now(), full, decay, c}
+}
+
+func (f FlashControl) canDelete() bool{
+	msSince := int(time.Since(f.start).Nanoseconds()/1000/1000)
+	return msSince > f.fullDurationMS+f.decayDurationMS
+}
+
+func (f FlashControl) color() Color{
+	msSince := int(time.Since(f.start).Nanoseconds()/1000/1000)
+	switch {
+	case msSince < f.fullDurationMS:
+		return f.c
+	case msSince < f.fullDurationMS+f.decayDurationMS:
+		scale := 1.0 - (float32(msSince)-float32(f.fullDurationMS)) / float32(f.decayDurationMS)
+		return f.c.Scale(scale)
+	default:
+		return Black
+	}
 }

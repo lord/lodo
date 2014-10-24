@@ -9,7 +9,7 @@ import (
 
 const BreakoutMusic = "/root/gopath/src/github.com/lord/lodo/media/Breakout_music.mp3"
 const RippleMusic = "/root/gopath/src/github.com/lord/lodo/media/Ripple_Music.mp3"
-const SitarMusic = "/root/gopath/src/github.com/lord/lodo/media/Sitar.mp3"
+const SitarMusic = "/root/gopath/src/github.com/lord/lodo/media/Sitar.mp3x"
 
 const A1deep = "/root/gopath/src/github.com/lord/lodo/media/ripple/A1_deep.wav"
 const A2deep = "/root/gopath/src/github.com/lord/lodo/media/ripple/A2_deep.wav"
@@ -39,6 +39,7 @@ const Pong = "/root/gopath/src/github.com/lord/lodo/media/wav/Pong.wav"
 const Glass = "/root/gopath/src/github.com/lord/lodo/media/wav/glass_breaking_1.wav"
 const GameOver = "/root/gopath/src/github.com/lord/lodo/media/wav/gameover.wav"
 const Pewpewpew = "/root/gopath/src/github.com/lord/lodo/media/wav/PewPewPew.wav"
+const Scrape = "/root/gopath/src/github.com/lord/lodo/media/wav/scrape.wav"
 
 const Rip1 = "/root/gopath/src/github.com/lord/lodo/media/rip/1.wav"
 const Rip2 = "/root/gopath/src/github.com/lord/lodo/media/rip/2.wav"
