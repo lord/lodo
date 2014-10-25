@@ -11,7 +11,7 @@ import (
 
 const boardWidth = 35
 const boardHeight = 42
-const winScore = 5
+const winScore = 3
 
 const ( 
     begin = 1 << iota 
@@ -39,7 +39,7 @@ func Run(board *core.Board) {
 	p1_score = 0
 	p2_score = 0
 	r = rand.New(rand.NewSource(99))
-	b = makeBall(17, 7, 1.2, 0.3, 3, .1, 1.0, core.MakeColor(31, 31, 31))
+	b = makeBall(17, 7, 1.2, 0.4, 3, .10, 1.0, core.MakeColor(31, 31, 31))
 	paddleX, paddleY := board.GetSquare(2, 5)
 	paddle2X, paddle2Y := board.GetSquare(2, 0)
 	paddle1 = makePaddle(float64(paddleX), float64(paddleY)+1, 6, 5, core.MakeColor(0, 0, 31))
@@ -122,13 +122,13 @@ func setMode(m int) {
 		modeTime = time.Now().Add(time.Duration(1000)*time.Millisecond)
 		b.hits = 0;
 		if mode == p1_scores {
-			b.init(paddle1.x+paddle1.w/2, paddle1.y, -((r.Float64()*2+1.0)*math.Pi/4), .3)
-			fmt.Printf("P1 Score\n")
+			b.init(paddle1.x+paddle1.w/2, paddle1.y, -((r.Float64()*2+1.0)*math.Pi/4), .4)
+//			fmt.Printf("P1 Score\n")
 		} else if mode == p2_scores {
-			fmt.Printf("P2 Score\n")
-			b.init(paddle2.x+paddle2.w/2, paddle2.y,(r.Float64()*2+1.0)*math.Pi/4,  .3)
+//			fmt.Printf("P2 Score\n")
+			b.init(paddle2.x+paddle2.w/2, paddle2.y,(r.Float64()*2+1.0)*math.Pi/4,  .4)
 		} else {
-			b.init(paddle2.x+paddle2.w/2, paddle2.y,(r.Float64()*2+1.0)*math.Pi/4,  .3)
+			b.init(paddle2.x+paddle2.w/2, paddle2.y,(r.Float64()*2+1.0)*math.Pi/4,  .4)
 		}
 	case m == p1_win:
 		modeTime = time.Now().Add(time.Duration(8000)*time.Millisecond)

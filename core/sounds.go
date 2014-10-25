@@ -9,7 +9,7 @@ import (
 
 const BreakoutMusic = "/root/gopath/src/github.com/lord/lodo/media/Breakout_music.mp3"
 const RippleMusic = "/root/gopath/src/github.com/lord/lodo/media/Ripple_Music.mp3"
-const SitarMusic = "/root/gopath/src/github.com/lord/lodo/media/Sitar.mp3x"
+const SitarMusic = "/root/gopath/src/github.com/lord/lodo/media/Sitar.mp3"
 
 const A1deep = "/root/gopath/src/github.com/lord/lodo/media/ripple/A1_deep.wav"
 const A2deep = "/root/gopath/src/github.com/lord/lodo/media/ripple/A2_deep.wav"
@@ -40,6 +40,11 @@ const Glass = "/root/gopath/src/github.com/lord/lodo/media/wav/glass_breaking_1.
 const GameOver = "/root/gopath/src/github.com/lord/lodo/media/wav/gameover.wav"
 const Pewpewpew = "/root/gopath/src/github.com/lord/lodo/media/wav/PewPewPew.wav"
 const Scrape = "/root/gopath/src/github.com/lord/lodo/media/wav/scrape.wav"
+const BreakoutVoice = "/root/gopath/src/github.com/lord/lodo/media/wav/breakout.wav"
+const OasisVoice = "/root/gopath/src/github.com/lord/lodo/media/voice/oasis.wav"
+const PongVoice = "/root/gopath/src/github.com/lord/lodo/media/wav/Pong2.wav"
+const Cheering = "/root/gopath/src/github.com/lord/lodo/media/wav/cheering.wav"
+
 
 const Rip1 = "/root/gopath/src/github.com/lord/lodo/media/rip/1.wav"
 const Rip2 = "/root/gopath/src/github.com/lord/lodo/media/rip/2.wav"

@@ -159,6 +159,57 @@ func (t Stext) remove() bool {
 	return t.canDelete
 }
 
+// Rect is a one pixel wide item with the upper corner at x y
+type   BlinkyRect struct {
+	x,y,level,width,depth,z,rateMS int
+	c []Color
+	start time.Time
+	canDelete bool
+}
+
+
+// Create a new rectangle.  Period is blink rate.  0 is no blink.
+func NewBlinkyRect(x,y,level,w,h,z,rateMS int, c []Color) BlinkyRect {
+	return BlinkyRect{x,y,level,w,h,z,rateMS,c, time.Now(), false}
+}
+
+func (r BlinkyRect) draw(b *Board) {
+	x:=r.x
+	y:=r.y
+	pattern := int(time.Since(r.start)/time.Millisecond) % (4*r.rateMS) / r.rateMS
+	dir := 1 // 1= right, 2 = up, 3 = left, 4 = down
+	incX := 1; incY := 0
+	for i:=0; i<2*(r.width+r.depth-2); i++ {
+		b.DrawPixel3(x,y,r.level, r.c[(i+pattern)%len(r.c)])
+		switch {
+			case dir == 1 && x>=r.x+r.width-1:			dir = 2; incX= 0; incY=1
+			case dir == 2 && y>=r.y+r.depth-1:			dir = 3; incX=-1; incY=0
+			case dir == 3 && x<=r.x:					dir = 4; incX= 0; incY=-1
+			case dir == 4 && y<=r.y:					return
+		}
+		x+= incX; y+= incY
+	}
+	// if r.periodMS == 0 {
+	// 	brd.DrawRectOutline(r.x, r.y, r.x+r.width-1, r.y+r.depth-1, r.c)
+	// } else {
+	// 	ms := int(time.Since(r.start)/time.Millisecond) % r.periodMS
+	// 	scale := 1.0 - float32(ms) * 2 / float32(r.periodMS)
+	// 	if scale < 0 { scale = -scale }
+	// 	brd.DrawRectOutline(r.x, r.y, r.x+r.width-1, r.y+r.depth-1, r.c.Scale(scale))
+	// }
+}
+
+func (r BlinkyRect) zOrder() int {
+	return r.z
+}
+
+func (r BlinkyRect) remove() bool {
+	return r.canDelete
+}
+
+
+
+
 /////////////////////
 // Pallette
 ///////////////////
@@ -340,6 +391,9 @@ func (a SArrow) remove() bool {
 	return a.sc.canDelete()
 }
 
+
+
+
 ///////////////////////////////////
 //
 // Controllers
@@ -407,3 +461,4 @@ func (f FlashControl) color() Color{
 		return Black
 	}
 }
+

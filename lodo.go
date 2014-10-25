@@ -99,9 +99,13 @@ func Run (b *core.Board) int {
 	b.AddItem(oasis)	
 
 	b.AddItem(core.Drawer(core.NewStext(4,13,2,core.White, core.Orient_0, "Choose")))
-	b.AddItem(core.NewSArrow(10,38,270,14,core.NewSolidControl(core.Blue)))
-	b.AddItem(core.Drawer(core.NewDrawRect(14,35,7,7,1,core.Green,1400)))
-	b.AddItem(core.NewSArrow(24,38,90,14,core.NewSolidControl(core.Blue)))
+	b.AddItem(core.NewSArrow(10,31,270,14,core.NewSolidControl(core.Blue)))
+	b.AddItem(core.Drawer(core.NewDrawRect(14,28,7,7,1,core.Green,1400)))
+	b.AddItem(core.NewSArrow(24,31,90,14,core.NewSolidControl(core.Blue)))
+	b.AddItem(core.NewBlinkyRect(0,0,0,35,42,5,300,[]core.Color{core.MakeColor(0,0,4),core.Black,core.Black,core.Black}))
+	lightR := core.MakeColor(2,0,0)
+	lightB := core.MakeColor(0,0,2)
+	b.AddItem(core.NewBlinkyRect(0,0,2,35,42,5,100,[]core.Color{lightB,lightR,lightR,lightR}))
 
 	left    := &pong
 	current := &bkout
@@ -113,8 +117,8 @@ func Run (b *core.Board) int {
 		b.RefreshSensors()
 		b.DrawAll(core.Black)
 
-		if b.CheckPressed(1, 5) {
-			dur := 2000
+		if b.CheckPressed(1, 4) {
+			dur := 1500
 			chooseSound := core.MakeSound(core.Scrape)
 			chooseSound.Play()
 			b.AddItem(core.NewCRect(7,35,7,7,13,core.NewSolidShortControl(dur,core.MakeColor(15,15,15))))
@@ -125,8 +129,8 @@ func Run (b *core.Board) int {
 			tmp := left; left=current; current=right; right=tmp
 		}
 
-		if b.CheckPressed(3, 5) { 
-			dur := 2000
+		if b.CheckPressed(3, 4) { 
+			dur := 1500
 			chooseSound := core.MakeSound(core.Scrape)
 			chooseSound.Play()
 			b.AddItem(core.NewCRect(21,35,7,7,13,core.NewSolidShortControl(3000,core.MakeColor(15,15,15))))
@@ -137,13 +141,19 @@ func Run (b *core.Board) int {
 			tmp:=right; right=current; current=left; left=tmp
 		}
 
-		if b.CheckDown(2, 5) {
+		if b.CheckDown(2, 4) {
 			switch current { 
 			case &pong:
+				chooseSound := core.MakeSound(core.PongVoice)
+				chooseSound.Play()
 				return Pong 
 			case &bkout:
+				chooseSound := core.MakeSound(core.BreakoutVoice)
+				chooseSound.Play()
 				return Breakout
 			case &oasis:
+				chooseSound := core.MakeSound(core.OasisVoice)
+				chooseSound.Play()
 				return Ripple
 			}
 		}

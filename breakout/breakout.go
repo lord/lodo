@@ -104,7 +104,7 @@ func Run(board *core.Board) {
 			}			
 			if now.After(modeTime) { setMode(play) }
 		case mode == end:
-			board.WriteText("SCORE",7,21,core.Orient_0, paddle1.color)
+			board.WriteText("SCORE",6,21,core.Orient_0, paddle1.color)
 			board.WriteText(fmt.Sprintf("%d",blocksTotal),14,28,core.Orient_0, core.Red)
 			if now.After(timePaddle) {
 				paddle1.step(board)
@@ -112,7 +112,8 @@ func Run(board *core.Board) {
 			}
 			if now.After(modeTime) { 
 				highscorenum = getHighScore()
-				if blocksTotal > highscore {
+				fmt.Printf("HS: %v %v\n", blocksTotal, highscorenum)
+				if blocksTotal > highscorenum {
 					setHighScore(blocksTotal)
 					setMode(newhighscore)
 				} else {
@@ -124,7 +125,9 @@ func Run(board *core.Board) {
 			board.WriteText(fmt.Sprintf("%d",highscorenum),14,28,core.Orient_0, core.White)
 			if now.After(modeTime) { return }
 		case mode == newhighscore:
-			board.WriteText("HIGH",7,21,core.Orient_0, paddle1.color)
+			board.WriteText("NEW",10,6,core.Orient_0, paddle1.color)
+			board.WriteText("HIGH",8,13,core.Orient_0, paddle1.color)
+			board.WriteText("SCORE",5,21,core.Orient_0, paddle1.color)
 			board.WriteText(fmt.Sprintf("%d",blocksTotal),14,28,core.Orient_0, core.White)
 			if now.After(modeTime) { return }
 		}
@@ -141,7 +144,7 @@ func setMode(m int) {
 		modeTime = time.Now().Add(time.Duration(3000)*time.Millisecond)
 		initBlocks()
 		blocksTotal = 0
-		ballsRemaining = 1
+		ballsRemaining = 3
 	case m == play:
 		modeTime = time.Now().Add(time.Duration(1000)*time.Millisecond)
 		b.hits = 0
@@ -155,7 +158,7 @@ func setMode(m int) {
 		}
 	case m == levelup:
 		modeTime = time.Now().Add(time.Duration(3000)*time.Millisecond)
-		b.init(paddle1.x+paddle1.w/2, paddle1.y, -((r.Float64()*2+1.0)*math.Pi/4), .4)
+		b.init(paddle1.x+paddle1.w/2, paddle1.y, -((r.Float64()*2+1.0)*math.Pi/4), .35)
 		b.hits = 0
 		initBlocks()
 	case m == end:
@@ -166,8 +169,8 @@ func setMode(m int) {
 	case m == highscore:
 		modeTime = time.Now().Add(time.Duration(5000)*time.Millisecond)
 	case m == newhighscore:
-		modeTime = time.Now().Add(time.Duration(5000)*time.Millisecond)
-		highscoreSound := core.MakeSound(core.Pewpewpew)
+		modeTime = time.Now().Add(time.Duration(15000)*time.Millisecond)
+		highscoreSound := core.MakeSound(core.Cheering)
 		highscoreSound.Play()
     }
    	mode = m
