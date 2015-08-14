@@ -6,10 +6,11 @@
 #include <errno.h>
 #include <sys/types.h>
 #include <sys/time.h>
+#include "/root/libpruio-0.2/src/c_wrapper/pruio.h" // include header
+#include "/root/libpruio-0.2/src/c_wrapper/pruio_pins.h"
 
-
-#include "./pruio_c_wrapper.h" // include header
-#include "./pruio_pins.h" // include header
+//#include "./pruio_c_wrapper.h" // include /header
+//#include "./pruio_pins.h" // include header
 
 #define P1 P8_13
 #define P2 P8_15
@@ -20,121 +21,145 @@
 #define PAUSE 1000
 #define SENSORS 80 //5*8*2
 
-int isleep(unsigned int mseconds)
-{
-  fd_set set;
-  struct timeval timeout;
+FILE *file;
 
-/* Initialize the file descriptor set. */
-  FD_ZERO(&set);
-  FD_SET(STDIN_FILENO, &set);
+// int isleep(unsigned int mseconds)
+// {
+//   fd_set set;
+//   struct timeval timeout;
 
-/* Initialize the timeout data structure. */
-  timeout.tv_sec = 0;
-  timeout.tv_usec = mseconds * 1;
+// /* Initialize the file descriptor set. */
+//   FD_ZERO(&set);
+//   FD_SET(STDIN_FILENO, &set);
 
-  return TEMP_FAILURE_RETRY(select(FD_SETSIZE,
-    &set, NULL, NULL,
-    &timeout));
-}
+//  Initialize the timeout data structure. 
+//   timeout.tv_sec = 0;
+//   timeout.tv_usec = mseconds * 1;
 
-int readSensors(PruIo *Io, int* o) {
-  int i, j, v1, v2, v3, v4;
+//   return TEMP_FAILURE_RETRY(select(FD_SETSIZE,
+//     &set, NULL, NULL,
+//     &timeout));
+// }
+
+int cState[SENSORS];
+int pState[SENSORS];
+
+int readSensors(pruIo *Io, int* o) {
+  printf("c: +readSensors\n");
+  int i, v1, v2, v3, v4;
   for (i=0; i<SENSORS; i++){ 
     o[i] = 0; 
   }
-  for (j=0; j<POLL; j++){
-    for (i=0; i<16; i++){
-      v1 = i&1;
-      v2 = (i&2)>>1;
-      v3 = (i&4)>>2;
-      v4 = (i&8)>>3;
-      pruio_gpio_out(Io, P1, v1); 
-      pruio_gpio_out(Io, P2, v2); 
-      pruio_gpio_out(Io, P3, v3); 
-      pruio_gpio_out(Io, P4, v4);
-      isleep(PAUSE);
-      o[i+00] += Io->Value[1]/POLL;
-      o[i+16] += Io->Value[2]/POLL;
-      //o[i+32] += Io->Value[3]/POLL;
-      o[i+48] += Io->Value[4]/POLL;
-      o[i+32] += Io->Value[3]/POLL;
-      o[i+64] += Io->Value[5]/POLL;
+  for (i=0; i<16; i++){
+    v1 = i&1;
+    v2 = (i&2)>>1;
+    v3 = (i&4)>>2;
+    v4 = (i&8)>>3;
+    pruio_gpio_setValue(Io, P1, v1);
+    pruio_gpio_setValue(Io, P2, v2); 
+    pruio_gpio_setValue(Io, P3, v3); 
+    pruio_gpio_setValue(Io, P4, v4); 
+    int x = 0;
+    while(
+      pruio_gpio_Value(Io,P1) != v1 &&
+      pruio_gpio_Value(Io,P2) != v2 &&
+      pruio_gpio_Value(Io,P3) != v3 &&
+      pruio_gpio_Value(Io,P4) != v4 &&
+      x++ < 10000
+      ); 
+    usleep(1);
+    if (x >= 10000) {
+      printf("c: not setting values\n");
     }
+    o[i+00] = Io->Adc->Value[1];
+    o[i+16] = Io->Adc->Value[2];
+    o[i+32] = Io->Adc->Value[3];
+    o[i+48] = Io->Adc->Value[4];
+    o[i+64] = Io->Adc->Value[5];
   }
+  printf("c: -readSensors\n");
   return 0;
 }
 
-int initSensors(PruIo *io) {
-  if (io->Errr) {
-    printf("initialisation failed (%s)\n", io->Errr);
-    return 1;
-  }
-  if (pruio_gpio_set(io, P1, PRUIO_OUT1, PRUIO_LOCK_CHECK)) {
-    printf("failed setting P1 (%s)\n", io->Errr);
-    return 1;
-  }
-  if (pruio_gpio_set(io, P2, PRUIO_OUT0, PRUIO_LOCK_CHECK)) {
-    printf("failed setting P2 (%s)\n", io->Errr); 
-    return 1;
-  }
-  if (pruio_gpio_set(io, P3, PRUIO_OUT0, PRUIO_LOCK_CHECK)) {
-    printf("failed setting P3 (%s)\n", io->Errr); 
-    return 1;
-  }
-  if (pruio_gpio_set(io, P4, PRUIO_OUT1, PRUIO_LOCK_CHECK)) {
-    printf("failed setting P4 (%s)\n", io->Errr); 
-    return 1;
-  }
-//  if (pruio_config(io, 0, 0x1FE, 0, 4, 0)) {
-  if (pruio_config(io, 1, 0xFE, 0, 4, 4)) {
-    printf("config failed (%s)\n", io->Errr);
-    return 1;
-  }
+int initSensors(pruIo *Io) {
+  if (pruio_config(Io, 1, 0x1FE, 0, 4)){ // upload (default) settings, start IO mode
+                            printf("config failed (%s)\n", Io->Errr);}
   return 0;
 }
 
-int stopSensors (PruIo *io){
-  pruio_gpio_out(io, P1, 0); 
-  pruio_gpio_out(io, P2, 0); 
-  pruio_gpio_out(io, P3, 0); 
-  pruio_gpio_out(io, P4, 0);
-  // reset pin configurations
-  pruio_gpio_set(io, P1, PRUIO_PIN_RESET, PRUIO_LOCK_CHECK);
-  pruio_gpio_set(io, P2, PRUIO_PIN_RESET, PRUIO_LOCK_CHECK);
-  pruio_gpio_set(io, P3, PRUIO_PIN_RESET, PRUIO_LOCK_CHECK);
-  pruio_gpio_set(io, P4, PRUIO_PIN_RESET, PRUIO_LOCK_CHECK);
-
+int stopSensors (pruIo *io){
   pruio_destroy(io); 
   return 0;
 }
 
 int printSensors(int sensors[]){
+  printf("c: printSensors\n");
   int bank, i;
-  for (bank=0; bank<3; bank++){
+  int changed = 0;
+  for (bank=0; bank<5; bank++){
     printf("%i >",bank);                               /* all steps */
     for(i = 1; i < 16; i++) {
-      if(sensors[i+bank*16]>10000){
-        printf("X ");
+      if(sensors[i+bank*16]>15000){
+        cState[i+bank*16] = 1;
       } else {
-        printf("- ");
+        cState[i+bank*16] = 0;
       }
+      if(cState[i+bank*16] != pState[i+bank*16]){ changed=1; }
+    }
+  }
+  for (i=0; i<SENSORS; i++){ pState[i] = cState[i]; }
+
+  if (changed > 0){
+    for (bank=0; bank<5; bank++){
+      printf("%i >",bank);                               /* all steps */
+      for(i = 1; i < 16; i++) {
+        if(cState[i+bank*16] == 1){
+          printf("X ");
+        } else {
+          printf("- ");
+        }
+      }
+      printf("\n");
     }
     printf("\n");
   }
-  printf("\n");
   return 0;
 }
 
-int main1(int argc, char **argv)
+void dumpsensors (int sensors[]){
+  int i, bank;
+  for (bank=0; bank<5; bank++){
+    for(i = 0; i < 16; i++) {
+        fprintf(file, "%i,", sensors[i+bank*16]);
+    }
+  }     
+  fprintf(file,"\n");
+}
+
+int main2(int argc, char **argv)
 {
+  file = fopen("file.txt", "w");
+  if (file == NULL)
+  {
+      printf("Error opening file!\n");
+      exit(1);
+  } 
 
-  int sensors[48] = {0,0,0,0, 0,0,0,0, 0,0,0,0, 0,0,0,0, 0,0,0,0, 0,0,0,0, 0,0,0,0, 0,0,0,0, 0,0,0,0, 0,0,0,0, 0,0,0,0, 0,0,0,0};
-
-  PruIo* io = pruio_new(0, 0x98, 0, 1);
-  initSensors(io);
-  readSensors(io, sensors);
-  printSensors(sensors);
-  stopSensors(io);
+  int sensors[SENSORS];
+  int i;
+  for (i=0; i<SENSORS; i++){ sensors[i]=0; }
+  //PruIo* io = pruio_new(0, 0x98, 0, 1);
+  pruIo *Io = pruio_new(PRUIO_DEF_ACTIVE, 0x98, 10, 0);
+  if (pruio_config(Io, 1, 0x1FE, 0, 4)){ // upload (default) settings, start IO mode
+                              printf("config failed (%s)\n", Io->Errr);}
+ {
+    while(1){
+    readSensors(Io, sensors);
+    //printSensors(sensors);
+    dumpsensors(sensors);
+  }
+    stopSensors(Io);
+  }
+  fclose(file);
   return 0;
 }

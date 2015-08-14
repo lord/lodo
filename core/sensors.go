@@ -1,11 +1,14 @@
 package core
 
-// #cgo LDFLAGS:  -lpruio -L"/usr/local/lib/freebasic/linux/" -lfb -lpthread -lprussdrv -ltermcap -lsupc++
+// #cgo LDFLAGS:  -lpruio -L"/usr/local/lib/freebasic/linux/" -lfb -lpthread -lprussdrv -ltermcap -lsupc++ -lpruio
 // #include "sensors.h"
 import "C"
 
 //import "errors"
 import "fmt"
+//import "unsafe"
+//import "log"
+//import "log/syslog"
 
 const sensorCount = 48
 
@@ -29,15 +32,18 @@ const (
 var sensors Sensors
 
 func (sensors *Sensors) initSensors(rows, cols int) error {
+	fmt.Println("+INIT SENSORS")
 	sensors.rows = rows
 	sensors.cols = cols
-	sensors.pruio = C.pruio_new(0, 0x98, 0, 1)
+	//sensors.pruio = C.pruio_new(0, 0x98, 0, 1)
+    sensors.pruio = C.pruio_new(0xFF , 0x98, 10, 0);
 	C.initSensors(sensors.pruio)
 	for i := 0; i < sensors.rows*sensors.cols; i++ {
 		sensors.last[i] = up
 		sensors.net[i] = up
 	}
-	sensors.debug = false
+	sensors.debug = true
+	fmt.Println("-INIT SENSORS")
 	return nil
 }
 
@@ -56,11 +62,15 @@ func (sensors *Sensors) getBoardState(x int, y int) int {
 }
 
 func (sensors *Sensors) readSensors() error {
+	fmt.Println("+READ SENSORS")
 	C.readSensors(sensors.pruio, &sensors.raw[0])
+//	C.readSensors(sensors.pruio, ()unsafe.Pointer(&sensors.raw[0]))
+	fmt.Println("-READ SENSORS")
 	return nil
 }
 
 func (sensors *Sensors) processSensors() error {
+	fmt.Printf("+processSensors\n")
 	var thd = C.int(30000)
 	for i := 0; i < 40; i++ {
 		sensors.last[i] = sensors.net[i]
@@ -121,5 +131,6 @@ func (sensors *Sensors) processSensors() error {
 			sensors.net[i] = released
 		}
 	}
+ 	fmt.Printf("-processSensors\n")
 	return nil
 }

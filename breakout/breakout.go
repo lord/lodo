@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"math"
 	"math/rand"
+    "log"
 //	"bufio"
 //	"io"
 	"io/ioutil"
@@ -38,6 +39,7 @@ var ballsRemaining int
 var breakoutmusic core.Sound
 var highscorenum int
 func Run(board *core.Board) {
+	log.Print("Starting Breakout")
 	setMode(begin)
 	board.SetVerticalMode(true)
 	r = rand.New(rand.NewSource(99))

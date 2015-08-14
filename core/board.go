@@ -496,6 +496,7 @@ func pointDistance(x1, y1, x2, y2 float64) float64 {
 }
 
 func (board *Board) RefreshSensors() {
+	fmt.Println("REFRESH SENSORS")
 	select {
 	case msg := <-board.poll:
 		_ = msg
@@ -648,7 +649,9 @@ func (brd *Board) printBoardState() error {
 }
 
 func (brd *Board) pollSensors(poll chan string) {
+	fmt.Printf("Enter pollSensors\n")
 	brd.sensors.readSensors()
+	fmt.Printf("Exit pollSensors\n")
 	poll <- "ready"
 }
 

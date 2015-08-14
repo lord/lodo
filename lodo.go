@@ -4,6 +4,8 @@ import (
 	"flag"
 	"fmt"
 	"time"
+    "log"
+	"log/syslog"
 	"github.com/lord/lodo/breakout"
 	"github.com/lord/lodo/core"
 	//"github.com/lord/lodo/maze"
@@ -20,6 +22,7 @@ var gameMode = flag.String(
 	"Selects the game to run. Options are 'test', 'rainbow-board', 'server', 'maze' and 'breakout'.",
 )
 
+
 const Selection=1
 const Maze=2
 const Pong=3
@@ -30,6 +33,13 @@ const Test=7
 const Server=8
 
 func main() {
+		fmt.Println("MAIN")
+    syslogger, err := syslog.New(syslog.LOG_INFO, "lodo")
+    if err == nil {
+    	log.SetOutput(syslogger)
+    }
+    log.Print("Starting Lodo")
+	
 	flag.Parse()
 	core.StartDog()
 
@@ -77,6 +87,7 @@ func main() {
 }
 
 func Run (b *core.Board) int {
+    fmt.Println("RUN")
 	b.SetVerticalMode(false)
 	timeOut   := time.Now().Add(time.Duration(30)*time.Second)
 	chooseSound := core.MakeSound(core.Selectgame)
@@ -121,8 +132,8 @@ func Run (b *core.Board) int {
 			dur := 1500
 			chooseSound := core.MakeSound(core.Scrape)
 			chooseSound.Play()
-			b.AddItem(core.NewCRect(7,35,7,7,13,core.NewSolidShortControl(dur,core.MakeColor(15,15,15))))
-			b.AddItem(core.NewSArrow(10,38,270,14,core.NewSolidShortControl(dur,core.MakeColor(0,0,3))))
+			b.AddItem(core.NewCRect(7,28,7,7,13,core.NewSolidShortControl(dur,core.MakeColor(15,15,15))))
+			b.AddItem(core.NewSArrow(10,31,270,14,core.NewSolidShortControl(dur,core.MakeColor(0,0,3))))
 			current.BeginAnime(core.Anime_departleft,dur)
 			right.BeginAnime(core.Anime_arriveright,dur)
 			delay(b,dur)
@@ -133,8 +144,8 @@ func Run (b *core.Board) int {
 			dur := 1500
 			chooseSound := core.MakeSound(core.Scrape)
 			chooseSound.Play()
-			b.AddItem(core.NewCRect(21,35,7,7,13,core.NewSolidShortControl(3000,core.MakeColor(15,15,15))))
-			b.AddItem(core.NewSArrow(24,38,270,14,core.NewSolidShortControl(3000,core.MakeColor(0,0,3))))	 
+			b.AddItem(core.NewCRect(21,28,7,7,13,core.NewSolidShortControl(3000,core.MakeColor(15,15,15))))
+			b.AddItem(core.NewSArrow(24,31,270,14,core.NewSolidShortControl(3000,core.MakeColor(0,0,3))))	 
 			current.BeginAnime(core.Anime_departright,dur)
 			left.BeginAnime(core.Anime_arriveleft,dur)
 			delay(b,dur)
